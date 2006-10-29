@@ -1,4 +1,14 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:five="http://namespaces.zope.org/five">
+           xmlns:five="http://namespaces.zope.org/five"
+           i18n_domain="five.customerize">
 
+  <permission id="five.AddTTWTemplate"
+              title="Five: Add TTW Template"
+              />
+  
+  <five:registerClass class=".zpt.TTWTemplate"
+                      meta_type="TTW Template"
+                      permission="five.AddTTWTemplate"
+                      />
+  
 </configure>

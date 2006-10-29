@@ -7,11 +7,11 @@ renderer by calling as if it were a view factory:
     >>> from five.customerize.zpt import TTWTemplate
     >>> template = TTWTemplate('test_template', '<html></html>')
     >>> template = template.__of__(app)
-    >>> renderer = template(None, None)
+    >>> renderer = template(self.folder, None)
     >>> print renderer()
     <html></html>
 
-We now add some more complex tal expressions to our template, and
+We now add some more complex TAL expressions to our template, and
 ensure that it obtains the passed in request and context for rendering:
 
     >>> template.pt_edit('''\
@@ -24,3 +24,4 @@ ensure that it obtains the passed in request and context for rendering:
     test_folder_1_
     bar
     None
+

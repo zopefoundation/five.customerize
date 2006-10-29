@@ -31,7 +31,8 @@ class TTWTemplateRenderer(object):
         bound_names = {'view': view,
                        'request': self.request,
                        'context': self.context}
-        return self.template._exec(bound_names, args, kwargs)
+        template = self.template.__of__(self.context)
+        return template._exec(bound_names, args, kwargs)
 
     def __of__(self, obj):
         return self
