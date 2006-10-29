@@ -29,8 +29,13 @@ Before we can start we need to load some important ZCML:
   >>> zcml.load_config('configure.zcml', Products.Five)
   >>> zcml.load_config('configure.zcml', five.customerize)
 
+Make this test a usable module
+
+  >>> from zope.testing.module import setUp, tearDown
+  >>> setUp(test, name='five.customerize.testcustomerize')
+
 XXX: we are using root as the app name
-  >>> root = app
+  >>> root = self.folder
 
 
 1. Turning an ObjectManager into a site
@@ -156,8 +161,19 @@ make the site the current site:
   >>> from zope.app.component.hooks import setSite
   >>> setSite(site)
 
-Now look it up and compare its output:
+The newly registered adapter has an explicit security check that
+matches the original (in this case 'Manage Five local sites'),
+so the adapter lookup will fail unless logged in:
 
+  >>> view = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"customizezpt.html")
+  Traceback (most recent call last):
+  ...
+  Unauthorized: The current user does not have the required "Manage Five local sites" permission
+
+Now look it up as manager and compare its output:
+
+  >>> self.setRoles(['Manager',])
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
   >>> view = view.__of__(item)
@@ -171,11 +187,7 @@ Now look it up and compare its output:
   nothing:   
   <BLANKLINE>
 
-  >>> view.__class__.__bases__
-  XXX
-
-
-5. Deleting view templates
+6. Deleting view templates
 --------------------------
 
 Once in a while we would like to get rid of the customized view.  The
@@ -196,6 +208,62 @@ Now the view look-up is back to the old way:
     <code tal:content="request/form/viewname">viewname</code>:</p>
   ...
 
+5. Views with custom classes
+----------------------------
+
+Sometimes view classes have custom base classes which we need to be
+available to the customized local view.  We create one of these views
+(using all the normal browser:page insanity) and then customize it:
+
+  >>> from Products.Five.browser import BrowserView
+  >>> class TestView(BrowserView):
+  ...     """A view class"""
+  ...     __name__ = 'mystaticview.html'
+  ...     def foo_method(self):
+  ...         return 'baz'
+  >>> from Products.Five.browser.metaconfigure import makeClassForTemplate
+  >>> from Products.Five.security import getSecurityInfo, protectClass
+  >>> from Globals import InitializeClass
+  >>> cdict = getSecurityInfo(TestView)
+  >>> cdict['__name__'] = 'simpleview.html'
+  >>> viewclass = makeClassForTemplate('testviewtemplate.pt', globals=globals(),
+  ... bases=(TestView,), cdict=cdict, name='simpleview.html')
+  >>> protectClass(viewclass, 'zope.Public')
+  >>> InitializeClass(viewclass)
+  >>> from zope.component import provideAdapter
+  >>> from zope.interface import Interface
+  >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+  >>> provideAdapter(viewclass, (Interface, IDefaultBrowserLayer),
+  ...                    Interface, name='simpleview.html')
+
+Now we retrieve the view and make sure it does what it should:
+
+  >>> view = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"simpleview.html")
+  >>> print view()
+  <html>
+  ...
+  A simple view template with a class
+  baz
+  ...
+
+And we customize it:
+
+  >>> customizeview = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"customizezpt.html")
+  >>> zpt = customizeview.doCustomizeTemplate(u'simpleview.html')
+  >>> template = getattr(site, 'testviewtemplate.pt')
+  >>> template.pt_edit('''\
+  ... A customized view
+  ... <span tal:replace="view/foo_method" />''', content_type=None)
+
+And render it again:
+
+  >>> view = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"simpleview.html")
+  >>> print view()
+  A customized view
+  baz
 
 Clean up:
 ---------

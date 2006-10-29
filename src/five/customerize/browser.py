@@ -81,6 +81,7 @@ class CustomizationView(BrowserView):
                 'zptfile': mangleAbsoluteFilename(reg.factory.index.filename),
                 'zcmlfile': mangleAbsoluteFilename(reg.info.file)
                 }
+
     def viewClassFromViewName(self, viewname):
         view = zope.component.getMultiAdapter((self.context, self.request),
                                               name=viewname)
@@ -89,11 +90,10 @@ class CustomizationView(BrowserView):
         # (generally object or BrowserView) we return the full class
         # and hope that it can be pickled
         klass = view.__class__
-        bases =klass.__bases__
-        if len(bases) == 1:
+        base =klass.__bases__[0]
+        if base is BrowserView or base is object:
             return klass
-        return bases[0]
-
+        return base
 
     def templateFromViewName(self, viewname):
         view = zope.component.getMultiAdapter((self.context, self.request),
@@ -103,6 +103,14 @@ class CustomizationView(BrowserView):
     def templateCodeFromViewName(self, viewname):
         template = self.templateFromViewName(viewname)
         return open(template.filename, 'rb').read() #XXX: bad zope
+
+    def permissionFromViewName(self, viewname):
+        view = zope.component.getMultiAdapter((self.context, self.request),
+                                              name=viewname)
+        permissions = view.__class__.__ac_permissions__
+        for permission, methods in permissions:
+            if methods[0] in ('', '__call__'):
+                return permission
 
     def doCustomizeTemplate(self, viewname):
         # find the nearest site
@@ -118,7 +126,9 @@ class CustomizationView(BrowserView):
 
         template_file = self.templateCodeFromViewName(viewname)
         viewclass = self.viewClassFromViewName(viewname)
-        viewzpt = TTWTemplate(zpt_id, template_file, view=viewclass)
+        permission = self.permissionFromViewName(viewname)
+        viewzpt = TTWTemplate(zpt_id, template_file, view=viewclass,
+                              permission=permission)
         site._setObject(zpt_id, viewzpt) #XXXthere could be a naming conflict
         components = site.getSiteManager()
 
