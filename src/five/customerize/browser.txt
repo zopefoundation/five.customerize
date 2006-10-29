@@ -4,6 +4,14 @@ Viewing TTWTemplates TTW
 Set Up
 ------
 
+Make this test available as a module so that stuff defined in here can
+be pickled properly:
+
+    >>> from zope.testing.module import setUp, tearDown
+    >>> setUp(test, name='five.customerize.browsertest')
+
+Load all of Five's configuration (this is a functional test):
+
     >>> import Products.Five
     >>> import five.customerize
     >>> from Products.Five.zcml import load_config
@@ -51,7 +59,7 @@ XXX: We should be able to do this TTW
     >>> t_id = app.folder._setObject('ttwtemplate', template)
     >>> sm = app.folder.getSiteManager()
     >>> sm.registerAdapter(template, (IObjectManager, IDefaultBrowserLayer),
-    ...                    Interface, name="myttwtemplate.html")
+    ...                    Interface, name='myttwtemplate.html')
     >>> import transaction
     >>> transaction.commit()
 
@@ -75,3 +83,57 @@ Now we edit our view template TTW:
     folder
     bar
     None
+
+Make and register a view that we can customize with a TTWTemplate:
+
+    >>> from Products.Five.browser import BrowserView
+    >>> class TestView(BrowserView):
+    ...     """A view class"""
+    ...     __name__ = 'mystaticview.html'
+    ...     def foo_method(self):
+    ...         return 'baz'
+    ...
+    ...     def __call__(self):
+    ...         return 'Original View'
+
+    >>> from zope.component import provideAdapter
+    >>> provideAdapter(TestView, (IObjectManager, IDefaultBrowserLayer),
+    ...                    Interface, name='mystaticview.html')
+    >>> browser.open('http://localhost/folder/mystaticview.html')
+    >>> print browser.contents
+    Original View
+
+Pass that view to the constructor for a new TTWTemplate, and register
+it locally to override the static view:
+
+    >>> template = TTWTemplate('ttwtemplate2', 'Not so static', view=TestView)
+    >>> t_id = app.folder._setObject('ttwtemplate2', template)
+    >>> sm = app.folder.getSiteManager()
+    >>> sm.registerAdapter(template, (IObjectManager, IDefaultBrowserLayer),
+    ...                    Interface, name='mystaticview.html')
+
+Now we browse the view to ensure that is has changed:
+
+    >>> browser.open('http://localhost/folder/mystaticview.html')
+    >>> print browser.contents
+    Not so static
+
+Edit the template to make it dynamic and see if we have access to the
+view methods:
+
+    >>> browser.open('http://localhost/folder/ttwtemplate2/pt_editForm')
+    >>> browser.getControl(name='text:text').value = '''\
+    ... Customized
+    ... <span tal:replace="view/foo_method"/>'''
+    >>> browser.getControl('Save Changes').click()
+    >>> browser.open('http://localhost/folder/mystaticview.html')
+    >>> print browser.contents
+    Customized
+    baz
+
+Clean up:
+---------
+
+    >>> from zope.testing.cleanup import cleanUp
+    >>> cleanUp()
+    >>> tearDown(test, name='five.customerize.browsertest')
