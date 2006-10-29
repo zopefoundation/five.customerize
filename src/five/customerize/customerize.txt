@@ -1,0 +1,204 @@
+Locally customizing template-based views
+========================================
+
+This document describes a typical story of locally customizing a
+global view component.  The steps in this story are:
+
+1. Making a folder a site
+
+2. Walking up to an object and getting a list of its template-based
+   views
+
+3. Selecting a particular view, seeing its template source and
+   deciding to customize it
+
+4. Customizing the template and seeing the customized template take
+   effect
+
+5. Deleting the template and seeing the old view take over again
+
+
+Setup
+-----
+
+Before we can start we need to load some important ZCML:
+
+  >>> from Products.Five import zcml
+  >>> import Products.Five.component
+  >>> import five.customerize
+  >>> zcml.load_config('configure.zcml', Products.Five)
+  >>> zcml.load_config('configure.zcml', five.customerize)
+
+XXX: we are using root as the app name
+  >>> root = app
+
+
+1. Turning an ObjectManager into a site
+----------------------------------------
+
+Let's create a folder that we'll turn into a Zope3-style site:
+
+  >>> from OFS.ObjectManager import ObjectManager
+  >>> site = ObjectManager()
+
+We need to add it to the root so that objects contained in it have a
+proper acquisition chain all the way to the top:
+
+  >>> id = root._setObject('site', site)
+  >>> site = root.site
+
+Now we make this a real site by using a view that a) sets
+``IObjectManagerSite``, b) sets a traversal hook and c) gives the site
+a component registration object (formerly known as site manager):
+
+  >>> import zope.component
+  >>> from zope.publisher.browser import TestRequest
+  >>> request = root.REQUEST
+  >>> view = zope.component.getMultiAdapter((site, request),
+  ...                                       name=u"components.html")
+  >>> view.makeSite()
+
+Now the site provides ``IObjectManagerSite``:
+
+  >>> from Products.Five.component.interfaces import IObjectManagerSite
+  >>> IObjectManagerSite.providedBy(site)
+  True
+
+And it has a site manager (component registry):
+
+  >>> site.getSiteManager() #doctest: +ELLIPSIS
+  <PersistentComponents ...>
+
+
+2. Template-based views available on an object
+----------------------------------------------
+
+Let's create a simple content object that we put into the folder
+(a.k.a. the site):
+
+  >>> from Products.Five.tests.testing.simplecontent import SimpleContent
+  >>> item = SimpleContent('item', 'An item')
+  >>> site._setOb('item', item)
+  >>> item = site.item
+
+Let's get a list of views (that also shows where each view is
+registered at):
+
+  >>> view = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"zptviews.html")
+  >>> view = view.__of__(item)
+  >>> from pprint import pprint
+  >>> viewnames = [reg.name for reg in view.templateViewRegistrations()]
+  >>> viewnames.sort()
+  >>> u'customizezpt.html' in viewnames
+  True
+  >>> u'zptviews.html' in viewnames
+  True
+
+3. and 4. Customizing a template-based view
+-------------------------------------------
+
+In the list of template-based browser views we can select one and see
+the source of its template:
+
+  >>> view = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"customizezpt.html")
+  >>> view = view.__of__(item)
+  >>> template = view.templateFromViewName(u'customizezpt.html')
+  >>> template.aq_base
+  <ZopeTwoPageTemplateFile at ...>
+  >>> import os.path
+  >>> os.path.basename(template.filename)
+  'customize.pt'
+
+  >>> print view.templateCodeFromViewName(u'customizezpt.html') #doctest: +ELLIPSIS
+  <html metal:use-macro="context/@@standard_macros/view"
+        i18n:domain="zope">
+  ...
+    <p i18n:translate="">This is the source of the
+    <code tal:content="request/form/viewname">viewname</code>:</p>
+  ...
+
+We now hit the customize button and get a customized ZPT template:
+
+  >>> zpt = view.doCustomizeTemplate(u'customizezpt.html')
+
+That actually creates a TTWTemplate object in the nearest site
+(perhaps later we'd like to have the option to pick which of the sites
+above us should be targeted)
+
+  >>> zpt = getattr(site, 'customize.pt')
+  >>> print zpt.read() #doctest: +ELLIPSIS
+  <html metal:use-macro="context/@@standard_macros/view"
+        i18n:domain="zope">
+  ...
+    <p i18n:translate="">This is the source of the
+    <code tal:content="request/form/viewname">viewname</code>:</p>
+  ...
+
+It also registers this component as a view now, so when we look up the
+view again, we get the customized one.  Therefore let us actually
+change the template to give us some info output:
+
+  >>> zpt.pt_edit("""
+  ... context:   <tal:var replace="structure context" />
+  ... template:  <tal:var replace="structure nocall:template" />
+  ... request:   <tal:var replace="structure python:repr(request)" />
+  ... view:      <tal:var replace="structure nocall:view" />
+  ... modules:   <tal:var replace="structure modules" />
+  ... options:   <tal:var replace="structure options" />
+  ... nothing:   <tal:var replace="structure nothing" />
+  ... """, content_type=None)
+
+In order to be able to look up the customized view now, we need to
+make the site the current site:
+
+  >>> from zope.app.component.hooks import setSite
+  >>> setSite(site)
+
+Now look it up and compare its output:
+
+  >>> view = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"customizezpt.html")
+  >>> view = view.__of__(item)
+  >>> print view() #doctest: +ELLIPSIS
+  context:   <SimpleContent at item>
+  template:  <TTWTemplate at customize.pt>
+  request:   <HTTPRequest, ...>
+  view:      <five.customerize.zpt.TTWView ...>
+  modules:   <Products.PageTemplates.ZRPythonExpr._SecureModuleImporter instance at ...>
+  options:   {'args': ()}
+  nothing:   
+  <BLANKLINE>
+
+  >>> view.__class__.__bases__
+  XXX
+
+
+5. Deleting view templates
+--------------------------
+
+Once in a while we would like to get rid of the customized view.  The
+easiest way to do that is to simply delete the template:
+
+  >>> if True:
+  ...     site._delObject('customize.pt')
+
+Now the view look-up is back to the old way:
+
+  >>> view = zope.component.getMultiAdapter((item, request),
+  ...                                       name=u"customizezpt.html")
+  >>> print open(view.index.filename, 'rb').read() #doctest: +ELLIPSIS
+  <html metal:use-macro="context/@@standard_macros/view"
+        i18n:domain="zope">
+  ...
+    <p i18n:translate="">This is the source of the
+    <code tal:content="request/form/viewname">viewname</code>:</p>
+  ...
+
+
+Clean up:
+---------
+
+  >>> from zope.app.testing.placelesssetup import tearDown
+  >>> tearDown()

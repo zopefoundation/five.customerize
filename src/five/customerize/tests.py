@@ -14,6 +14,7 @@ def test_suite():
     return unittest.TestSuite([
         ZopeDocFileSuite('zpt.txt', package="five.customerize",
                          setUp=setUp, tearDown=zope.component.testing.tearDown),
+        ZopeDocFileSuite('customerize.txt', package="five.customerize"),
         FunctionalDocFileSuite('browser.txt', package="five.customerize")
         ])
 

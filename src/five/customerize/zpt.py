@@ -1,10 +1,13 @@
+import zope.component
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+from zope.app.container.interfaces import IObjectRemovedEvent
 
 class TTWTemplate(ZopePageTemplate):
     """A template class used to generate Zope 3 views TTW"""
 
     def __init__(self, id, text=None, content_type=None, encoding='utf-8',
                  strict=False, view=None):
+        
         self.view = view
         super(TTWTemplate, self).__init__(id, text, content_type, encoding,
                                           strict)
@@ -36,3 +39,13 @@ class TTWTemplateRenderer(object):
 
     def __of__(self, obj):
         return self
+
+@zope.component.adapter(TTWTemplate, IObjectRemovedEvent)
+def unregisterViewWhenZPTIsDeleted(zpt, event):
+    components = zope.component.getSiteManager(zpt)
+    for reg in components.registeredAdapters():
+        if reg.factory == zpt:
+            break
+    components.unregisterAdapter(reg.factory, reg.required, reg.provided,
+                                 reg.name)
+

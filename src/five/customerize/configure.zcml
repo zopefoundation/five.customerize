@@ -1,5 +1,6 @@
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser"
            i18n_domain="five.customerize">
 
   <permission id="five.AddTTWTemplate"
@@ -10,5 +11,25 @@
                       meta_type="TTW Template"
                       permission="five.AddTTWTemplate"
                       />
+
+  <browser:pages for="*"
+                 class=".browser.CustomizationView"
+                 permission="five.ManageSite">
+    <browser:page
+       name="zptviews.html"
+       template="zptviews.pt"
+       />
+    <browser:page
+       name="customizezpt.html"
+       template="customize.pt"
+       />
+    <browser:page
+       name="customizezpt"
+       attribute="customizeTemplate"
+       />
+  </browser:pages>
+
+  <subscriber handler=".zpt.unregisterViewWhenZPTIsDeleted"/>
+                
   
 </configure>
