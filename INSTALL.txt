@@ -1,0 +1,38 @@
+Installing This Package
+=======================
+
+Prerequisites
+-------------
+
+* Zope 2.10.x
+
+* setuptools
+
+
+Installation
+------------
+
+Place the ``five`` top-level package into your instance's
+``lib/python`` directory.  You can also install it as an egg using
+ez_install, for example into your instance by turning it into a
+workingenv.
+
+
+Configuration
+-------------
+
+Place a ``five.customerize-configure.zcml`` file into your instance's
+``etc/package-includes`` directory with the following contents::
+
+  <include package="five.customerize" />
+
+Alternatively, you can also add this line to the bottom of
+``etc/site.zcml``.
+
+
+Running the Tests
+-----------------
+
+Use the following command to run this package's tests:
+
+  $ bin/zopectl test -s five.customerize
