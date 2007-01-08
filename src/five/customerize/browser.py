@@ -8,11 +8,13 @@ from Products.Five.browser import BrowserView
 import zope.interface
 import zope.component
 import zope.dottedname.resolve
+from zope.interface.interfaces import IInterface
+from zope.schema.interfaces import IVocabularyFactory
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.traversing.browser import absoluteURL
 from zope.app.apidoc.presentation import getViews
 
-from five.customerize.zpt import TTWTemplate
+from five.customerize.zpt import TTWViewTemplate
 
 def mangleAbsoluteFilename(filename):
     """
@@ -90,7 +92,7 @@ class CustomizationView(BrowserView):
         # (generally object or BrowserView) we return the full class
         # and hope that it can be pickled
         klass = view.__class__
-        base =klass.__bases__[0]
+        base = klass.__bases__[0]
         if base is BrowserView or base is object:
             return klass
         return base
@@ -102,7 +104,9 @@ class CustomizationView(BrowserView):
 
     def templateCodeFromViewName(self, viewname):
         template = self.templateFromViewName(viewname)
-        return open(template.filename, 'rb').read() #XXX: bad zope
+        #XXX: we can't do template.read() here because of a bug in
+        # Zope 3's ZPT implementation.
+        return open(template.filename, 'rb').read()
 
     def permissionFromViewName(self, viewname):
         view = zope.component.getMultiAdapter((self.context, self.request),
@@ -127,8 +131,8 @@ class CustomizationView(BrowserView):
         template_file = self.templateCodeFromViewName(viewname)
         viewclass = self.viewClassFromViewName(viewname)
         permission = self.permissionFromViewName(viewname)
-        viewzpt = TTWTemplate(zpt_id, template_file, view=viewclass,
-                              permission=permission)
+        viewzpt = TTWViewTemplate(zpt_id, template_file, view=viewclass,
+                                  permission=permission)
         site._setObject(zpt_id, viewzpt) #XXXthere could be a naming conflict
         components = site.getSiteManager()
 
@@ -140,7 +144,8 @@ class CustomizationView(BrowserView):
                 break
 
         components.registerAdapter(viewzpt, required=reg.required,
-                                   provided=reg.provided, name=viewname) #XXX info?
+                                   provided=reg.provided, name=viewname
+                                   ) #XXX info?
 
         viewzpt = getattr(site, zpt_id)
         return viewzpt
@@ -150,4 +155,55 @@ class CustomizationView(BrowserView):
         # to get a "direct" URL we use aq_inner for a straight
         # acquisition chain
         url = absoluteURL(aq_inner(viewzpt), self.request) + "/manage_workspace"
-        self.request.RESPONSE.redirect(url)
+        self.request.response.redirect(url)
+
+class RegistrationsView(BrowserView):
+
+    def viewRegistrations(self):
+        regs = []
+        components = zope.component.getSiteManager(self.context)
+        for reg in components.registeredAdapters():
+            if (len(reg.required) == 2 and
+                reg.required[1].isOrExtends(IBrowserRequest) and
+                reg.factory == self.context):
+                regs.append(reg)
+        def regkey(reg):
+            return (reg.name, reg.required)
+        return sorted(regs, key=regkey)
+
+    def getAllInterfaceNames(self):
+        factory = zope.component.getUtility(IVocabularyFactory, 'Interfaces')
+        vocab = factory(self.context)
+        return (term.token for term in vocab)
+
+    def getRequestInterfaceNames(self):
+        factory = zope.component.getUtility(IVocabularyFactory, 'Interfaces')
+        vocab = factory(self.context)
+        return (term.token for term in vocab
+                if term.value.isOrExtends(IBrowserRequest))
+
+    # TODO needs tests
+    def unregister(self):
+        index = self.request.form.get('index')
+        try:
+            index = int(index)
+        except (TypeError, ValueError):
+            index = None
+        if index is None:
+            #XXX: find right exception type
+            raise ValueError("Missing or invalid 'index' parameter.")
+        regs = self.viewRegistrations()
+        reg = regs[index]
+        components = zope.component.getSiteManager(self.context)
+        components.unregisterAdapter(reg.factory, reg.required, reg.provided,
+                                     reg.name)
+        self.request.response.redirect('registrations.html')
+
+    # TODO needs tests
+    def register(self, for_name, type_name, name='', comment=''):
+        for_ = zope.component.getUtility(IInterface, for_name)
+        type = zope.component.getUtility(IInterface, type_name)
+        components = zope.component.getSiteManager(self.context)
+        components.registerAdapter(self.context, (for_, type),
+                                   zope.interface.Interface, name, comment)
+        self.request.response.redirect('registrations.html')

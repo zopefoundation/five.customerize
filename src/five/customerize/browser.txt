@@ -1,5 +1,5 @@
-Viewing TTWTemplates TTW
-========================
+Viewing TTWViewTemplates through-the-web
+========================================
 
 Set Up
 ------
@@ -7,8 +7,8 @@ Set Up
 Make this test available as a module so that stuff defined in here can
 be pickled properly:
 
-    >>> from zope.testing.module import setUp, tearDown
-    >>> setUp(test, name='five.customerize.browsertest')
+    >>> from zope.testing import module
+    >>> module.setUp(test, name='five.customerize.browsertest')
 
 Load all of Five's configuration (this is a functional test):
 
@@ -48,14 +48,14 @@ We can turn it into a site by using the ``components.html`` view:
     >>> browser.open('http://localhost/folder/components.html')
     >>> browser.getControl('Make site').click()
 
-Create and a TTWTemplate instance as a view in our site manager:
+Create and a TTWViewTemplate instance as a view in our site manager:
 XXX: We should be able to do this TTW
 
     >>> from zope.interface import Interface
     >>> from OFS.interfaces import IObjectManager
     >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-    >>> from five.customerize.zpt import TTWTemplate
-    >>> template = TTWTemplate('ttwtemplate', 'hello')
+    >>> from five.customerize.zpt import TTWViewTemplate
+    >>> template = TTWViewTemplate('ttwtemplate', 'hello')
     >>> t_id = app.folder._setObject('ttwtemplate', template)
     >>> sm = app.folder.getSiteManager()
     >>> sm.registerAdapter(template, (IObjectManager, IDefaultBrowserLayer),
@@ -63,7 +63,7 @@ XXX: We should be able to do this TTW
     >>> import transaction
     >>> transaction.commit()
 
-Let's see if we can view it
+Let's see if we can view it:
 
     >>> browser.handleErrors = False
     >>> browser.open('http://localhost/folder/myttwtemplate.html')
@@ -84,7 +84,7 @@ Now we edit our view template TTW:
     bar
     None
 
-Make and register a view that we can customize with a TTWTemplate:
+Make and register a view that we can customize with a TTWViewTemplate:
 
     >>> from Products.Five.browser import BrowserView
     >>> class TestView(BrowserView):
@@ -103,10 +103,11 @@ Make and register a view that we can customize with a TTWTemplate:
     >>> print browser.contents
     Original View
 
-Pass that view to the constructor for a new TTWTemplate, and register
+Pass that view to the constructor for a new TTWViewTemplate, and register
 it locally to override the static view:
 
-    >>> template = TTWTemplate('ttwtemplate2', 'Not so static', view=TestView)
+    >>> template = TTWViewTemplate('ttwtemplate2', 'Not so static',
+    ...                             view=TestView)
     >>> t_id = app.folder._setObject('ttwtemplate2', template)
     >>> sm = app.folder.getSiteManager()
     >>> sm.registerAdapter(template, (IObjectManager, IDefaultBrowserLayer),
@@ -134,6 +135,6 @@ view methods:
 Clean up:
 ---------
 
+    >>> module.tearDown(test, name='five.customerize.browsertest')
     >>> from zope.testing.cleanup import cleanUp
     >>> cleanUp()
-    >>> tearDown(test, name='five.customerize.browsertest')
