@@ -4,9 +4,14 @@ from AccessControl import Unauthorized
 
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zope.app.container.interfaces import IObjectRemovedEvent
+from zope.interface import implements
+
+from five.customerize.interfaces import ITTWViewTemplate
+
 
 class TTWViewTemplate(ZopePageTemplate):
     """A template class used to generate Zope 3 views TTW"""
+    implements(ITTWViewTemplate)
 
     manage_options = (
         ZopePageTemplate.manage_options[0],

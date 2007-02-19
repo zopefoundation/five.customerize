@@ -41,7 +41,7 @@
   <subscriber handler=".zpt.unregisterViewWhenZPTIsDeleted"/>
 
   <browser:pages
-      for=".zpt.TTWViewTemplate"
+      for=".zpt.ITTWViewTemplate"
       class=".browser.RegistrationsView"
       permission="five.ManageSite">
     <browser:page
