@@ -187,7 +187,7 @@ Now look it up as manager and compare its output:
   nothing:   
   <BLANKLINE>
 
-6. Deleting view templates
+5. Deleting view templates
 --------------------------
 
 Once in a while we would like to get rid of the customized view.  The
@@ -208,7 +208,7 @@ Now the view look-up is back to the old way:
     <code tal:content="request/form/viewname">viewname</code>:</p>
   ...
 
-5. Views with custom classes
+6. Views with custom classes
 ----------------------------
 
 Sometimes view classes have custom base classes which we need to be
