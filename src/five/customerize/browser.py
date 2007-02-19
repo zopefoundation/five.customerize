@@ -15,6 +15,8 @@ from zope.traversing.browser import absoluteURL
 from zope.app.apidoc.presentation import getViews
 
 from five.customerize.zpt import TTWViewTemplate
+from five.customerize.interfaces import IViewTemplateContainer
+
 
 def mangleAbsoluteFilename(filename):
     """
@@ -120,7 +122,7 @@ class CustomizationView(BrowserView):
         # find the nearest site
         site = findSite(self.context, IObjectManagerSite)
         if site is None:
-            raise TypeError("No site found")  #TODO find right exception
+            raise TypeError("No site found")  # TODO find right exception
 
         # we're using the original filename of the template, not the
         # view name to avoid potential conflicts and/or confusion in
@@ -133,8 +135,12 @@ class CustomizationView(BrowserView):
         permission = self.permissionFromViewName(viewname)
         viewzpt = TTWViewTemplate(zpt_id, template_file, view=viewclass,
                                   permission=permission)
-        site._setObject(zpt_id, viewzpt) #XXXthere could be a naming conflict
-        components = site.getSiteManager()
+        container = zope.component.queryUtility(IViewTemplateContainer)
+        if container is not None:
+            viewzpt = container.addTemplate(zpt_id, viewzpt)
+        else:
+            site._setObject(zpt_id, viewzpt) #XXXthere could be a naming conflict
+            viewzpt = getattr(site, zpt_id)
 
         # find out the view registration object so we can get at the
         # provided and required interfaces
@@ -143,11 +149,11 @@ class CustomizationView(BrowserView):
             if reg.name == viewname:
                 break
 
+        components = site.getSiteManager()
         components.registerAdapter(viewzpt, required=reg.required,
                                    provided=reg.provided, name=viewname
                                    ) #XXX info?
 
-        viewzpt = getattr(site, zpt_id)
         return viewzpt
 
     def customizeTemplate(self, viewname):
