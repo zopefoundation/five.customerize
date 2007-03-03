@@ -36,3 +36,4 @@ Running the Tests
 Use the following command to run this package's tests:
 
   $ bin/zopectl test -s five.customerize
+

@@ -11,26 +11,38 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Setup for five.customerize package
+""" Setup for five.customerize package """
 
-$Id$
-"""
-import os
-from setuptools import setup, Extension
+from setuptools import setup
 
-setup(name='five.customerize',
-      version='0.1',
-      url='http://svn.zope.org/five.customerize',
-      license='ZPL 2.1',
-      description='TTW customization of template-based Zope 3 views',
-      author='Zope Corporation and Contributors',
-      author_email='z3-five@codespeak.net',
-      long_description='',
-      
-      packages=['five', 'five.customerize'],
+setup(name = 'five.customerize',
+      version = '0.1.1',
+      description = 'TTW customization of template-based Zope 3 views',
+      keywords = 'zope3 views templates customization ttw',
+      author = 'Zope Corporation and Contributors',
+      author_email = 'z3-five@codespeak.net',
+      url = 'http://svn.zope.org/five.customerize',
+      download_url = 'http://cheeseshop.python.org/pypi/five.customerize/',
+      license = 'ZPL 2.1',
+      packages = ['five', 'five.customerize'],
       package_dir = {'': 'src'},
-      namespace_packages=['five',],
+      namespace_packages = ['five',],
       include_package_data = True,
-
+      platforms = 'Any',
       zip_safe = False,
-      )
+      classifiers = [
+        'Development Status :: 4 - Beta',
+        'Environment :: Web Environment',
+        'Framework :: Zope2',
+        'Framework :: Zope3',
+        'Intended Audience :: Other Audience',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: Zope Public License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Internet :: WWW/HTTP :: Site Management',
+      ],
+      long_description = """\
+        """,
+)
+

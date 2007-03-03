@@ -32,3 +32,4 @@ Developer Resources
 - Writable Subversion checkout:
 
   $ svn co svn+ssh://svn.zope.org/repos/main/five.customerize/trunk
+
