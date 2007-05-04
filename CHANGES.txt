@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+five.customerize 0.1.2 (2007/05/04)
+---------------------------------
+
+Release for Plone 3.0beta3 without OSX metadata
+
+
 five.customerize 0.1.1 (2007/03/03)
 ---------------------------------
 
