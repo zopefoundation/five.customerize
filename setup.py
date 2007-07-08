@@ -30,6 +30,9 @@ setup(name = 'five.customerize',
       include_package_data = True,
       platforms = 'Any',
       zip_safe = False,
+      install_requires=[
+        'setuptools'
+      ],
       classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
