@@ -54,7 +54,7 @@ def mangleAbsoluteFilename(filename):
         try:
             zope.dottedname.resolve.resolve('.'.join(pieces))
             break
-        except ImportError:
+        except (ImportError, ValueError):
             pieces = pieces[1:]
     if not pieces:
         return filename
