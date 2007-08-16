@@ -112,11 +112,11 @@ class TTWViewletRenderer(object):
         self.view = view
         self.viewlet = viewlet
         self.manager = manager
+        self.ttwviewlet = None
 
     def update(self):
-        # TODO: do we have to do anything here in regard to the customized
-        #    template?  i don't think so...
-        return
+        """ update the viewlet before `render` is called """
+        view = self._getViewlet().update()
 
     def render(self, *args, **kwargs):
         """ render the viewlet using the customized template """
@@ -136,6 +136,8 @@ class TTWViewletRenderer(object):
         return template._exec(bound_names, args, kwargs)
 
     def _getViewlet(self):
+        if self.ttwviewlet is not None:
+            return self.ttwviewlet
         view = self.view
         if view is not None:
             # Filesystem-based view templates are trusted code and
@@ -146,6 +148,7 @@ class TTWViewletRenderer(object):
             class TTWViewlet(view):
                 __allow_access_to_unprotected_subobjects__ = 1
             view = TTWViewlet(self.context, self.request, self.viewlet, self.manager)
+        self.ttwviewlet = view
         return view
 
     # Zope 2 wants to acquisition-wrap every view object (via __of__).
