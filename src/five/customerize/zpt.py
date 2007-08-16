@@ -8,7 +8,6 @@ from zope.viewlet.interfaces import IViewlet, IViewletManager
 from zope.interface import implements
 
 from five.customerize.interfaces import ITTWViewTemplate
-from five.customerize.utils import findViewletTemplate
 
 
 class TTWViewTemplate(ZopePageTemplate):
@@ -120,11 +119,7 @@ class TTWViewletRenderer(object):
 
     def render(self, *args, **kwargs):
         """ render the viewlet using the customized template """
-        attr, tmpl = findViewletTemplate(self.view)
         view = self._getViewlet()
-
-        # TODO: the bound names still have to be fixed here...
-
         # we need to override the template's context and request as
         # they generally point to the wrong objects (a template's
         # context usually is what it was acquired from, which isn't
