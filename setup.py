@@ -16,7 +16,7 @@
 from setuptools import setup
 
 setup(name = 'five.customerize',
-      version = '0.1.2',
+      version = '0.1.3',
       description = 'TTW customization of template-based Zope 3 views',
       keywords = 'zope3 views templates customization ttw',
       author = 'Zope Corporation and Contributors',
@@ -30,6 +30,9 @@ setup(name = 'five.customerize',
       include_package_data = True,
       platforms = 'Any',
       zip_safe = False,
+      install_requires=[
+        'setuptools'
+      ],
       classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
