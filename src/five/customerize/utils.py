@@ -17,7 +17,7 @@ def findViewletTemplate(viewlet):
         item = getattr(viewlet, attr, None)
         if isTemplate(item):
             return attr, item
-    attrs = [ attr for attr in dir(viewlet) if isTemplate(getattr(viewlet, attr)) ]
+    attrs = [ attr for attr in dir(viewlet) if isTemplate(getattr(viewlet, attr, None)) ]
     if len(attrs) == 1:
         return attrs[0], getattr(viewlet, attrs[0])
     else:
