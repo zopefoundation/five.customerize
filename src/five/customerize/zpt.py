@@ -37,7 +37,7 @@ class TTWViewTemplate(ZopePageTemplate):
                 raise Unauthorized('The current user does not have the '
                                    'required "%s" permission'
                                    % self.permission)
-        if IViewlet.providedBy(viewlet) and IViewletManager.providedBy(manager):
+        if IViewletManager.providedBy(manager):
             return TTWViewletRenderer(context, request, self, self.view,
                 viewlet, manager)
         else:
