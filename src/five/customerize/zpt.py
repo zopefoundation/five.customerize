@@ -2,6 +2,7 @@ import zope.component
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 
+from zope.viewlet.viewlet import ViewletBase
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zope.app.container.interfaces import IObjectRemovedEvent
 from zope.viewlet.interfaces import IViewlet, IViewletManager
@@ -140,7 +141,7 @@ class TTWViewletRenderer(object):
             # that for TTW templates (which are trusted code) by
             # creating a subclass with unrestricted access to all
             # subobjects.
-            class TTWViewlet(view):
+            class TTWViewlet(view, ViewletBase):
                 __allow_access_to_unprotected_subobjects__ = 1
             view = TTWViewlet(self.context, self.request, self.viewlet, self.manager)
         self.ttwviewlet = view
