@@ -204,7 +204,7 @@ class TTWPortletRenderer(object):
             # subobjects.
             class TTWPortlet(view):
                 __allow_access_to_unprotected_subobjects__ = 1
-            view = TTWPortlet(self.context, self.request, self, self.manager, self.data)
+            view = TTWPortlet(self.context, self.request, self.view, self.manager, self.data)
         self.renderer = view
         return view
 
