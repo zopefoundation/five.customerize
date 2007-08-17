@@ -9,6 +9,8 @@ from zope.viewlet.interfaces import IViewlet, IViewletManager
 from zope.interface import implements
 
 from five.customerize.interfaces import ITTWViewTemplate
+from plone.portlets.interfaces import IPortletRenderer
+from plone.portlets.interfaces import IPortletManager
 
 
 class TTWViewTemplate(ZopePageTemplate):
@@ -27,7 +29,7 @@ class TTWViewTemplate(ZopePageTemplate):
         super(TTWViewTemplate, self).__init__(id, text, content_type, encoding,
                                               strict)
 
-    def __call__(self, context, request, viewlet=None, manager=None):
+    def __call__(self, context, request, viewlet=None, manager=None, data=None):
         #XXX raise a sensible exception if context and request are
         # omitted, IOW, if someone tries to render the template not as
         # a view.
@@ -37,6 +39,9 @@ class TTWViewTemplate(ZopePageTemplate):
                 raise Unauthorized('The current user does not have the '
                                    'required "%s" permission'
                                    % self.permission)
+        if IPortletManager.providedBy(manager):
+            return TTWPortletRenderer(context, request, self, self.view,
+                manager, data)
         if IViewletManager.providedBy(manager):
             return TTWViewletRenderer(context, request, self, self.view,
                 viewlet, manager)
@@ -146,6 +151,66 @@ class TTWViewletRenderer(object):
             view = TTWViewlet(self.context, self.request, self.viewlet, self.manager)
         self.ttwviewlet = view
         return view
+
+    # Zope 2 wants to acquisition-wrap every view object (via __of__).
+    # We don't need this as the TTWViewTemplate object is already
+    # properly acquisition-wrapped in __call__.  Nevertheless we need
+    # to support the __of__ method as a no-op.
+    def __of__(self, obj):
+        return self
+
+
+class TTWPortletRenderer(object):
+    """ analogon to TTWViewletRenderer for portlets """
+    implements(IPortletRenderer)
+
+    __allow_access_to_unprotected_subobjects__ = True
+
+    def __init__(self, context, request, template, view, manager=None, data=None):
+        self.context = context
+        self.request = request
+        self.template = template
+        self.view = view
+        self.manager = manager
+        self.data = data
+        self.renderer = None
+
+    def update(self):
+        """ update the portlet before `render` is called """
+        view = self._getRenderer().update()
+
+    def render(self, *args, **kwargs):
+        """ render the portlet using the customized template """
+        view = self._getRenderer()
+        # we need to override the template's context and request as
+        # they generally point to the wrong objects (a template's
+        # context usually is what it was acquired from, which isn't
+        # what the context is for a view template).
+        bound_names = {'context': self.context,
+                       'request': self.request,
+                       'view': view}
+        template = self.template.__of__(self.context)
+        return template._exec(bound_names, args, kwargs)
+
+    def _getRenderer(self):
+        if self.renderer is not None:
+            return self.renderer
+        view = self.view
+        if view is not None:
+            # Filesystem-based view templates are trusted code and
+            # have unrestricted access to the view class.  We simulate
+            # that for TTW templates (which are trusted code) by
+            # creating a subclass with unrestricted access to all
+            # subobjects.
+            class TTWPortlet(view):
+                __allow_access_to_unprotected_subobjects__ = 1
+            view = TTWPortlet(self.context, self.request, self, self.manager, self.data)
+        self.renderer = view
+        return view
+
+    @property
+    def available(self):
+        return self._getRenderer().available
 
     # Zope 2 wants to acquisition-wrap every view object (via __of__).
     # We don't need this as the TTWViewTemplate object is already
