@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+five.customerize 0.2 (2007/08/17)
+---------------------------------
+
+Support for viewlets and portlets as used in Plone 3.0
+
+
 five.customerize 0.1.3 (2007/07/08)
 ---------------------------------
 
