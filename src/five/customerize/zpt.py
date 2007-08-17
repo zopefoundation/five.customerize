@@ -23,9 +23,10 @@ class TTWViewTemplate(ZopePageTemplate):
         ) + ZopePageTemplate.manage_options[2:]
 
     def __init__(self, id, text=None, content_type='text/html', strict=True,
-                 encoding='utf-8', view=None, permission=None):
+                 encoding='utf-8', view=None, permission=None, name=None):
         self.view = view
         self.permission = permission
+        self.name = name
         super(TTWViewTemplate, self).__init__(id, text, content_type, encoding,
                                               strict)
 
