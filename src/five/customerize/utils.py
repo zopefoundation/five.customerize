@@ -13,7 +13,7 @@ def isTemplate(obj):
 
 def findViewletTemplate(viewlet):
     """ try to find the attribute holding the template within a viewlet """
-    for attr in 'index', 'template', '__call__', 'render':
+    for attr in 'index', 'template', '_template', '__call__', 'render':
         item = getattr(viewlet, attr, None)
         if isTemplate(item):
             return attr, item
