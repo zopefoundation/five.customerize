@@ -15,8 +15,10 @@
 
 from setuptools import setup
 
+version = '0.2',
+
 setup(name = 'five.customerize',
-      version = '0.1.3',
+      version = version,
       description = 'TTW customization of template-based Zope 3 views',
       keywords = 'zope3 views templates customization ttw',
       author = 'Zope Corporation and Contributors',
@@ -34,7 +36,7 @@ setup(name = 'five.customerize',
         'setuptools'
       ],
       classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Zope2',
         'Framework :: Zope3',
@@ -43,6 +45,7 @@ setup(name = 'five.customerize',
         'License :: OSI Approved :: Zope Public License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
       ],
       long_description = """\
