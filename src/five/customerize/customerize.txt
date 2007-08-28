@@ -106,12 +106,13 @@ registered at):
 In the list of template-based browser views we can select one and see
 the source of its template:
 
+  >>> from Acquisition import aq_base
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
   >>> view = view.__of__(item)
   >>> template = view.templateFromViewName(u'customizezpt.html')
-  >>> template.aq_base
-  <ZopeTwoPageTemplateFile at ...>
+  >>> aq_base(template)
+  <...PageTemplateFile ...>
   >>> import os.path
   >>> os.path.basename(template.filename)
   'customize.pt'
