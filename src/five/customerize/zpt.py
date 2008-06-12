@@ -1,6 +1,4 @@
 import zope.component
-from AccessControl import getSecurityManager
-from AccessControl import Unauthorized
 
 from zope.viewlet.viewlet import ViewletBase
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
@@ -9,6 +7,7 @@ from zope.viewlet.interfaces import IViewlet, IViewletManager
 from zope.interface import implements
 
 from five.customerize.interfaces import ITTWViewTemplate
+from five.customerize.utils import checkPermission
 from plone.portlets.interfaces import IPortletRenderer
 from plone.portlets.interfaces import IPortletManager
 
@@ -34,26 +33,25 @@ class TTWViewTemplate(ZopePageTemplate):
         #XXX raise a sensible exception if context and request are
         # omitted, IOW, if someone tries to render the template not as
         # a view.
-        sm = getSecurityManager()
-        if self.permission:
-            if not sm.checkPermission(self.permission, context):
-                raise Unauthorized('The current user does not have the '
-                                   'required "%s" permission'
-                                   % self.permission)
+
+        # the security check is now deferred until the template/viewlet/portlet
+        # is actually called, because it may be looked up during traversal,
+        # in which case there's no proper security context yet
         if IPortletManager.providedBy(manager):
             return TTWPortletRenderer(context, request, self, self.view,
-                manager, data)
+                manager, data, self.permission)
         if IViewletManager.providedBy(manager):
             return TTWViewletRenderer(context, request, self, self.view,
-                viewlet, manager)
+                viewlet, manager, self.permission)
         else:
-            return TTWViewTemplateRenderer(context, request, self, self.view)
+            return TTWViewTemplateRenderer(context, request, self, self.view, self.permission)
 
     # overwrite Shared.DC.Scripts.Binding.Binding's before traversal
     # hook that would prevent to look up views for instances of this
     # class.
     def __before_publishing_traverse__(self, self2, request):
         pass
+
 
 class TTWViewTemplateRenderer(object):
     """The view object for the TTW View Template.
@@ -64,11 +62,12 @@ class TTWViewTemplateRenderer(object):
     (__call__).
     """
 
-    def __init__(self, context, request, template, view):
+    def __init__(self, context, request, template, view, permission=None):
         self.context = context
         self.request = request
         self.template = template
         self.view = view
+        self.permission = permission
 
     def __call__(self, *args, **kwargs):
         """Render the TTWViewTemplate-based view.
@@ -85,6 +84,7 @@ class TTWViewTemplateRenderer(object):
         return template._exec(bound_names, args, kwargs)
 
     def _getView(self):
+        checkPermission(self.permission, self.context)
         view = self.view
         if view is not None:
             # Filesystem-based view templates are trusted code and
@@ -111,7 +111,7 @@ class TTWViewletRenderer(object):
 
     __allow_access_to_unprotected_subobjects__ = True
 
-    def __init__(self, context, request, template, view, viewlet=None, manager=None):
+    def __init__(self, context, request, template, view, viewlet=None, manager=None, permission=None):
         self.context = context
         self.request = request
         self.template = template
@@ -119,6 +119,7 @@ class TTWViewletRenderer(object):
         self.viewlet = viewlet
         self.manager = manager
         self.ttwviewlet = None
+        self.permission = permission
 
     def update(self):
         """ update the viewlet before `render` is called """
@@ -138,6 +139,7 @@ class TTWViewletRenderer(object):
         return template._exec(bound_names, args, kwargs)
 
     def _getViewlet(self):
+        checkPermission(self.permission, self.context)
         if self.ttwviewlet is not None:
             return self.ttwviewlet
         view = self.view
@@ -167,7 +169,7 @@ class TTWPortletRenderer(object):
 
     __allow_access_to_unprotected_subobjects__ = True
 
-    def __init__(self, context, request, template, view, manager=None, data=None):
+    def __init__(self, context, request, template, view, manager=None, data=None, permission=None):
         self.context = context
         self.request = request
         self.template = template
@@ -175,6 +177,7 @@ class TTWPortletRenderer(object):
         self.manager = manager
         self.data = data
         self.renderer = None
+        self.permission = permission
 
     def update(self):
         """ update the portlet before `render` is called """
@@ -194,6 +197,7 @@ class TTWPortletRenderer(object):
         return template._exec(bound_names, args, kwargs)
 
     def _getRenderer(self):
+        checkPermission(self.permission, self.context)
         if self.renderer is not None:
             return self.renderer
         view = self.view
@@ -229,3 +233,4 @@ def unregisterViewWhenZPTIsDeleted(zpt, event):
             components.unregisterAdapter(reg.factory, reg.required,
                                          reg.provided, reg.name)
             break
+

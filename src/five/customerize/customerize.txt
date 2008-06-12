@@ -164,10 +164,11 @@ make the site the current site:
 
 The newly registered adapter has an explicit security check that
 matches the original (in this case 'Manage Five local sites'),
-so the adapter lookup will fail unless logged in:
+so calling it will fail unless logged in:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
+  >>> print view()
   Traceback (most recent call last):
   ...
   Unauthorized: The current user does not have the required "Manage Five local sites" permission

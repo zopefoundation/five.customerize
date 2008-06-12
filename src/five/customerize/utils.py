@@ -1,3 +1,5 @@
+from AccessControl import getSecurityManager
+from AccessControl import Unauthorized
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile as Z2PTF
 from zope.pagetemplate.pagetemplatefile import PageTemplateFile as Z3PTF
 from zope.app.pagetemplate.viewpagetemplatefile import BoundPageTemplate
@@ -24,4 +26,12 @@ def findViewletTemplate(viewlet):
         # TODO: we should pass on the message if we find multiple templates
         pass
     return None, None
+
+
+def checkPermission(permission, context):
+    sm = getSecurityManager()
+    if permission is not None:
+        if not sm.checkPermission(permission, context):
+            raise Unauthorized('The current user does not have the '
+                               'required "%s" permission' % permission)
 
