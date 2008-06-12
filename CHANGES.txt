@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+five.customerize 0.3 (unreleased)
+---------------------------------
+
+Fix for the long-standing issue where the security context had mysteriously
+gone missing.
+
+
 five.customerize 0.2 (2007/08/17)
 ---------------------------------
 
