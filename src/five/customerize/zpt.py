@@ -1,5 +1,4 @@
-import zope.component
-
+from zope.component import adapter, getSiteManager
 from zope.viewlet.viewlet import ViewletBase
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zope.app.container.interfaces import IObjectRemovedEvent
@@ -225,9 +224,9 @@ class TTWPortletRenderer(object):
         return self
 
 
-@zope.component.adapter(TTWViewTemplate, IObjectRemovedEvent)
+@adapter(TTWViewTemplate, IObjectRemovedEvent)
 def unregisterViewWhenZPTIsDeleted(zpt, event):
-    components = zope.component.getSiteManager(zpt)
+    components = getSiteManager(zpt)
     for reg in components.registeredAdapters():
         if reg.factory == zpt:
             components.unregisterAdapter(reg.factory, reg.required,

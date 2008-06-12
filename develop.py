@@ -16,6 +16,6 @@
 $Id$
 """
 
-import workspace.develop
+from workspace.develop import main
 
-workspace.develop.main()
+main()

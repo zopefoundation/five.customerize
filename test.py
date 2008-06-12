@@ -19,10 +19,11 @@ see zope.testing testrunner.txt
 $Id$
 """
 
-import os, sys
+from os.path import join, split
+from sys import argv, path, exit
 
-src = os.path.join(os.path.split(sys.argv[0])[0], 'src')
-sys.path.insert(0, src) # put at beginning to avoid one in site_packages
+src = join(split(argv[0])[0], 'src')
+path.insert(0, src) # put at beginning to avoid one in site_packages
 
 from zope.testing import testrunner
 
@@ -32,5 +33,5 @@ defaults = [
     '--tests-pattern', '^tests$',
     ]
 
-sys.exit(testrunner.run(defaults))
+exit(testrunner.run(defaults))
 

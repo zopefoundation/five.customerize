@@ -1,13 +1,14 @@
-import os.path
+from os.path import sep, isabs, split, basename
 from Acquisition import aq_inner
 
 from Products.Five.component.interfaces import IObjectManagerSite
 from Products.Five.component import findSite
 from Products.Five.browser import BrowserView
 
-import zope.interface
-import zope.component
-import zope.dottedname.resolve
+from zope.interface import providedBy, Interface
+from zope.component import getMultiAdapter, getSiteManager
+from zope.component import getUtility, queryUtility
+from zope.dottedname.resolve import resolve
 from zope.interface.interfaces import IInterface
 from zope.schema.interfaces import IVocabularyFactory
 from zope.publisher.interfaces.browser import IBrowserRequest
@@ -30,7 +31,7 @@ def mangleAbsoluteFilename(filename):
     platforms:
     
       >>> def filesystemPath(*elements):
-      ...     return os.path.sep.join(elements)
+      ...     return sep.join(elements)
 
     We see that the filename is now mangled:
 
@@ -44,27 +45,26 @@ def mangleAbsoluteFilename(filename):
       >>> mangleAbsoluteFilename(not_in_a_package) == not_in_a_package
       True
     """
-    if not os.path.isabs(filename):
+    if not isabs(filename):
         raise ValueError("Can only determine package for absolute filenames")
-    dir, basename = os.path.split(filename)
-    pieces = dir.split(os.path.sep)
+    dir, base = split(filename)
+    pieces = dir.split(sep)
     if pieces[0] == '':
         pieces = pieces[1:]
     while pieces:
         try:
-            zope.dottedname.resolve.resolve('.'.join(pieces))
+            resolve('.'.join(pieces))
             break
         except (ImportError, ValueError):
             pieces = pieces[1:]
     if not pieces:
         return filename
-    return '.'.join(pieces) + '/' + basename
+    return '.'.join(pieces) + '/' + base
 
 class CustomizationView(BrowserView):
 
     def templateViewRegistrations(self):
-        for reg in getViews(zope.interface.providedBy(self.context),
-                            IBrowserRequest):
+        for reg in getViews(providedBy(self.context), IBrowserRequest):
             factory = reg.factory
             while hasattr(factory, 'factory'):
                 factory = factory.factory
@@ -87,8 +87,7 @@ class CustomizationView(BrowserView):
                 }
 
     def viewClassFromViewName(self, viewname):
-        view = zope.component.getMultiAdapter((self.context, self.request),
-                                              name=viewname)
+        view = getMultiAdapter((self.context, self.request), name=viewname)
         # The view class is generally auto-generated, we usually want
         # the first base class, though if the view only has one base
         # (generally object or BrowserView) we return the full class
@@ -100,8 +99,7 @@ class CustomizationView(BrowserView):
         return base
 
     def templateFromViewName(self, viewname):
-        view = zope.component.getMultiAdapter((self.context, self.request),
-                                              name=viewname)
+        view = getMultiAdapter((self.context, self.request), name=viewname)
         return view.index
 
     def templateCodeFromViewName(self, viewname):
@@ -111,8 +109,7 @@ class CustomizationView(BrowserView):
         return open(template.filename, 'rb').read()
 
     def permissionFromViewName(self, viewname):
-        view = zope.component.getMultiAdapter((self.context, self.request),
-                                              name=viewname)
+        view = getMultiAdapter((self.context, self.request), name=viewname)
         permissions = view.__class__.__ac_permissions__
         for permission, methods in permissions:
             if methods[0] in ('', '__call__'):
@@ -128,14 +125,14 @@ class CustomizationView(BrowserView):
         # view name to avoid potential conflicts and/or confusion in
         # URLs
         template = self.templateFromViewName(viewname)
-        zpt_id = os.path.basename(template.filename)
+        zpt_id = basename(template.filename)
 
         template_file = self.templateCodeFromViewName(viewname)
         viewclass = self.viewClassFromViewName(viewname)
         permission = self.permissionFromViewName(viewname)
         viewzpt = TTWViewTemplate(zpt_id, template_file, view=viewclass,
                                   permission=permission)
-        container = zope.component.queryUtility(IViewTemplateContainer)
+        container = queryUtility(IViewTemplateContainer)
         if container is not None:
             viewzpt = container.addTemplate(zpt_id, viewzpt)
         else:
@@ -144,8 +141,7 @@ class CustomizationView(BrowserView):
 
         # find out the view registration object so we can get at the
         # provided and required interfaces
-        for reg in getViews(zope.interface.providedBy(self.context),
-                            IBrowserRequest):
+        for reg in getViews(providedBy(self.context), IBrowserRequest):
             if reg.name == viewname:
                 break
 
@@ -167,7 +163,7 @@ class RegistrationsView(BrowserView):
 
     def viewRegistrations(self):
         regs = []
-        components = zope.component.getSiteManager(self.context)
+        components = getSiteManager(self.context)
         for reg in components.registeredAdapters():
             if (len(reg.required) == 2 and
                 reg.required[1].isOrExtends(IBrowserRequest) and
@@ -178,12 +174,12 @@ class RegistrationsView(BrowserView):
         return sorted(regs, key=regkey)
 
     def getAllInterfaceNames(self):
-        factory = zope.component.getUtility(IVocabularyFactory, 'Interfaces')
+        factory = getUtility(IVocabularyFactory, 'Interfaces')
         vocab = factory(self.context)
         return (term.token for term in vocab)
 
     def getRequestInterfaceNames(self):
-        factory = zope.component.getUtility(IVocabularyFactory, 'Interfaces')
+        factory = getUtility(IVocabularyFactory, 'Interfaces')
         vocab = factory(self.context)
         return (term.token for term in vocab
                 if term.value.isOrExtends(IBrowserRequest))
@@ -200,16 +196,16 @@ class RegistrationsView(BrowserView):
             raise ValueError("Missing or invalid 'index' parameter.")
         regs = self.viewRegistrations()
         reg = regs[index]
-        components = zope.component.getSiteManager(self.context)
+        components = getSiteManager(self.context)
         components.unregisterAdapter(reg.factory, reg.required, reg.provided,
                                      reg.name)
         self.request.response.redirect('registrations.html')
 
     # TODO needs tests
     def register(self, for_name, type_name, name='', comment=''):
-        for_ = zope.component.getUtility(IInterface, for_name)
-        type = zope.component.getUtility(IInterface, type_name)
-        components = zope.component.getSiteManager(self.context)
+        for_ = getUtility(IInterface, for_name)
+        type = getUtility(IInterface, type_name)
+        components = getSiteManager(self.context)
         components.registerAdapter(self.context, (for_, type),
-                                   zope.interface.Interface, name, comment)
+                                   Interface, name, comment)
         self.request.response.redirect('registrations.html')
