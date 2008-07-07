@@ -1,7 +1,11 @@
 CHANGES
 =======
 
-five.customerize 0.3 (unreleased)
+five.customerize 0.4 (unreleased)
+---------------------------------
+
+
+five.customerize 0.3 (2008/07/07)
 ---------------------------------
 
 Fix for the long-standing issue where the security context had mysteriously
