@@ -4,6 +4,7 @@ CHANGES
 five.customerize 0.4 (unreleased)
 ---------------------------------
 
+Added missing dependencies on zope.app.apidoc.
 
 five.customerize 0.3 (2008/07/07)
 ---------------------------------

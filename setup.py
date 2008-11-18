@@ -33,7 +33,8 @@ setup(name = 'five.customerize',
       platforms = 'Any',
       zip_safe = False,
       install_requires=[
-        'setuptools'
+        'setuptools',
+        'zope.app.apidoc',
       ],
       classifiers = [
         'Development Status :: 5 - Production/Stable',
