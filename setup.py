@@ -34,7 +34,6 @@ setup(name = 'five.customerize',
       zip_safe = False,
       install_requires=[
         'setuptools',
-        'zope.app.apidoc',
       ],
       classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -49,7 +48,5 @@ setup(name = 'five.customerize',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
       ],
-      long_description = """\
-        """,
 )
 
