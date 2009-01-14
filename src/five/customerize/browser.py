@@ -6,17 +6,32 @@ from Products.Five.component import findSite
 from Products.Five.browser import BrowserView
 
 from zope.interface import providedBy, Interface
+from zope.component import getGlobalSiteManager
 from zope.component import getMultiAdapter, getSiteManager
 from zope.component import getUtility, queryUtility
 from zope.dottedname.resolve import resolve
 from zope.interface.interfaces import IInterface
 from zope.schema.interfaces import IVocabularyFactory
+from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.traversing.browser import absoluteURL
-from zope.app.apidoc.presentation import getViews
 
 from five.customerize.zpt import TTWViewTemplate
 from five.customerize.interfaces import IViewTemplateContainer
+
+
+# This method was copied from zope.app.apidoc.presentation
+def getViews(iface, type=IRequest):
+    """Get all view registrations for a particular interface."""
+    gsm = getGlobalSiteManager()
+    for reg in gsm.registeredAdapters():
+        if (len(reg.required) > 0 and
+            reg.required[-1] is not None and
+            reg.required[-1].isOrExtends(type)):
+
+            for required_iface in reg.required[:-1]:
+                if required_iface is None or iface.isOrExtends(required_iface):
+                    yield reg
 
 
 def mangleAbsoluteFilename(filename):

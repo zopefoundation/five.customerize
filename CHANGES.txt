@@ -4,9 +4,11 @@ CHANGES
 five.customerize 0.4 (unreleased)
 ---------------------------------
 
+Fixed deprecation warnings for use of Globals.
+
 Specify all package dependencies.
 
-Added missing dependencies on zope.app.apidoc.
+Avoid a dependency on zope.app.apidoc by copying over the getViews method.
 
 five.customerize 0.3 (2008/07/07)
 ---------------------------------
