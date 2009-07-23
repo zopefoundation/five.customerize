@@ -4,6 +4,8 @@ CHANGES
 five.customerize 0.4 (unreleased)
 ---------------------------------
 
+Support Zope 2.12's BoundPageTemplateFile.
+
 Fixed deprecation warnings for use of Globals.
 
 Specify all package dependencies.
