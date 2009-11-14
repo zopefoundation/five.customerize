@@ -15,12 +15,12 @@
 
 from setuptools import setup
 
-version = '1.0a1'
+version = '1.0b1'
 
 setup(name = 'five.customerize',
       version = version,
-      description = 'TTW customization of template-based Zope 3 views',
-      keywords = 'zope3 views templates customization ttw',
+      description = 'TTW customization of template-based Zope views',
+      keywords = 'zope views templates customization ttw',
       author = 'Zope Corporation and Contributors',
       author_email = 'z3-five@codespeak.net',
       url = 'http://pypi.python.org/pypi/five.customerize',
