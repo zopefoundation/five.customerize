@@ -15,7 +15,7 @@
 
 from setuptools import setup
 
-version = '0.4'
+version = '1.0a1'
 
 setup(name = 'five.customerize',
       version = version,
@@ -23,8 +23,7 @@ setup(name = 'five.customerize',
       keywords = 'zope3 views templates customization ttw',
       author = 'Zope Corporation and Contributors',
       author_email = 'z3-five@codespeak.net',
-      url = 'http://svn.zope.org/five.customerize',
-      download_url = 'http://cheeseshop.python.org/pypi/five.customerize/',
+      url = 'http://pypi.python.org/pypi/five.customerize',
       license = 'ZPL 2.1',
       packages = ['five', 'five.customerize'],
       package_dir = {'': 'src'},
@@ -47,21 +46,19 @@ setup(name = 'five.customerize',
         'zope.app.component',
         'zope.app.container',
         'zope.app.pagetemplate',
-        # 'transaction',
-        # 'Acquisition',
-        # 'Zope2',
+        'transaction',
+        'Acquisition',
+        'Zope2',
       ],
       classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Zope2',
-        'Framework :: Zope3',
         'Intended Audience :: Other Audience',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: Zope Public License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
       ],
       long_description = """\

@@ -27,7 +27,7 @@ Developer Resources
 
 - Read-only Subversion checkout:
 
-  $ svn co svn://svn.zope.org/repos/main/five.customerize/trunk
+  $ svn co http://svn.zope.org/repos/main/five.customerize/trunk
 
 - Writable Subversion checkout:
 
