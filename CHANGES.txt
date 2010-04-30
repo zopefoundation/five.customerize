@@ -4,6 +4,8 @@ CHANGES
 1.0b1 - Unreleased
 ------------------
 
+Make sure TTW viewlet and portlet classes get the containing view as the
+view parameter on initialization, rather than getting themselves.
 
 1.0a1 - 2009-11-14
 ------------------
