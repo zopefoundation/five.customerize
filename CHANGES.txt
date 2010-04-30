@@ -4,6 +4,9 @@ CHANGES
 1.0b1 - Unreleased
 ------------------
 
+Fixed a memory leak by making sure that TTW view subclasses are only
+generated once, rather than once per request.
+
 Make sure TTW viewlet and portlet classes get the containing view as the
 view parameter on initialization, rather than getting themselves.
 

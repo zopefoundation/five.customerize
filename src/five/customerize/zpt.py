@@ -93,8 +93,12 @@ class TTWViewTemplateRenderer(object):
             # that for TTW templates (which are trusted code) by
             # creating a subclass with unrestricted access to all
             # subobjects.
-            class TTWView(view_class):
-                __allow_access_to_unprotected_subobjects__ = 1
+            if hasattr(view_class, '_five_customerize_ttw_class'):
+                TTWView = view_class._five_customerize_ttw_class
+            else:
+                class TTWView(view_class):
+                    __allow_access_to_unprotected_subobjects__ = 1
+                view_class._five_customerize_ttw_class = TTWView
             self.view = TTWView(self.context, self.request)
             return self.view
 
@@ -149,8 +153,12 @@ class TTWViewletRenderer(object):
             # that for TTW templates (which are trusted code) by
             # creating a subclass with unrestricted access to all
             # subobjects.
-            class TTWViewlet(view_class, ViewletBase):
-                __allow_access_to_unprotected_subobjects__ = 1
+            if hasattr(view_class, '_five_customerize_ttw_class'):
+                TTWViewlet = view_class._five_customerize_ttw_class
+            else:
+                class TTWViewlet(view_class, ViewletBase):
+                    __allow_access_to_unprotected_subobjects__ = 1
+                view_class._five_customerize_ttw_class = TTWViewlet
             self.viewlet = TTWViewlet(self.context, self.request, self.view, self.manager)
             return self.viewlet
 
@@ -206,8 +214,12 @@ class TTWPortletRenderer(object):
             # that for TTW templates (which are trusted code) by
             # creating a subclass with unrestricted access to all
             # subobjects.
-            class TTWPortlet(view_class):
-                __allow_access_to_unprotected_subobjects__ = 1
+            if hasattr(view_class, '_five_customerize_ttw_class'):
+                TTWPortlet = view_class._five_customerize_ttw_class
+            else:
+                class TTWPortlet(view_class):
+                    __allow_access_to_unprotected_subobjects__ = 1
+                view_class._five_customerize_ttw_class = TTWPortlet
             self.renderer = TTWPortlet(self.context, self.request, self.view, self.manager, self.data)
             return self.renderer
 
