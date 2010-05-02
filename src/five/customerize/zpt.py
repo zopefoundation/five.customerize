@@ -1,7 +1,7 @@
 from zope.component import adapter, getSiteManager
 from zope.viewlet.viewlet import ViewletBase
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
-from zope.app.container.interfaces import IObjectRemovedEvent
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 from zope.viewlet.interfaces import IViewlet, IViewletManager
 from zope.interface import implements
 

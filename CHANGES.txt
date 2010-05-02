@@ -1,14 +1,18 @@
 CHANGES
 =======
 
-1.0b1 - Unreleased
+1.0b1 - 2010-05-01
 ------------------
 
+Updated imports to avoid dependencies on zope.app.component and
+zope.app.container. [davisagli]
+
 Fixed a memory leak by making sure that TTW view subclasses are only
-generated once, rather than once per request.
+generated once, rather than once per request. [davisagli]
 
 Make sure TTW viewlet and portlet classes get the containing view as the
 view parameter on initialization, rather than getting themselves.
+[davisagli]
 
 1.0a1 - 2009-11-14
 ------------------

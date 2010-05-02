@@ -8,16 +8,6 @@ Overview
 Template-based browser views, much like it is possible to customize
 file-system based view templates in the CMF's portal_skin tools.
 
-Changes
--------
-
-See CHANGES.txt.
-
-Installation
-------------
-
-See INSTALL.txt.
-
 Developer Resources
 -------------------
 

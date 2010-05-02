@@ -15,7 +15,7 @@
       />
 
   <utility
-      component="zope.app.component.vocabulary.InterfacesVocabulary"
+      component="zope.componentvocabulary.vocabulary.InterfacesVocabulary"
       name="Interfaces"
       />
 
