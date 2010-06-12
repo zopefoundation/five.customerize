@@ -21,14 +21,6 @@ global view component.  The steps in this story are:
 Setup
 -----
 
-Before we can start we need to load some important ZCML:
-
-  >>> from Products.Five import zcml
-  >>> import Products.Five.component
-  >>> import five.customerize
-  >>> zcml.load_config('configure.zcml', Products.Five)
-  >>> zcml.load_config('configure.zcml', five.customerize)
-
 Make this test a usable module
 
   >>> from zope.testing import module
@@ -224,7 +216,13 @@ available to the customized local view.  We create one of these views
   ...     def foo_method(self):
   ...         return 'baz'
   >>> from Products.Five.browser.metaconfigure import makeClassForTemplate
-  >>> from Products.Five.security import getSecurityInfo, protectClass
+
+  # BBB Zope 2.12
+  >>> try:
+  ...     from AccessControl.security import getSecurityInfo, protectClass
+  ... except ImportError:
+  ...     from Products.Five.security import getSecurityInfo, protectClass
+
   >>> from App.class_init import InitializeClass
   >>> cdict = getSecurityInfo(TestView)
   >>> cdict['__name__'] = 'simpleview.html'

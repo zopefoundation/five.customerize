@@ -4,6 +4,8 @@ CHANGES
 1.0b2 - unreleased
 ------------------
 
+- Made tests compatible with Zope 2.13 and avoid deprecation warnings.
+  [hannosch]
 
 1.0b1 - 2010-05-01
 ------------------

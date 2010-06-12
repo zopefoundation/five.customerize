@@ -26,4 +26,3 @@ ensure that it obtains the passed in request and context for rendering:
     test_folder_1_
     bar
     None
-

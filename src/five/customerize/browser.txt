@@ -10,19 +10,6 @@ be pickled properly:
     >>> from zope.testing import module
     >>> module.setUp(test, name='five.customerize.browsertest')
 
-Load all of Five's configuration (this is a functional test):
-
-    >>> import Products.Five
-    >>> import five.customerize
-    >>> from Products.Five.zcml import load_config
-    >>> load_config('configure.zcml', package=Products.Five)
-    >>> load_config('configure.zcml', package=five.customerize)
-
-Enable local component lookup hooks:
-
-    >>> from zope.site.hooks import setHooks
-    >>> setHooks()
-
 
 Making a site
 -------------
@@ -32,7 +19,12 @@ Making a site
 
 Create the test browser we'll be using:
 
-    >>> from Products.Five.testbrowser import Browser
+    # BBB Zope 2.12
+    >>> try:
+    ...     from Testing.testbrowser import Browser
+    ... except ImportError:
+    ...     from Products.Five.testbrowser import Browser
+
     >>> browser = Browser()
     >>> browser.addHeader('Authorization', 'Basic manager:r00t')
 
