@@ -1,8 +1,8 @@
 CHANGES
 =======
 
-1.0b2 - unreleased
-------------------
+1.0 - 2010-06-13
+----------------
 
 - Package metadata cleanup and provide a buildout configuration for testing
   the package on its own.
