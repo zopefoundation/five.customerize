@@ -12,11 +12,7 @@ Prerequisites
 Installation
 ------------
 
-Place the ``five`` top-level package into your instance's
-``lib/python`` directory.  You can also install it as an egg using
-ez_install, for example into your instance by turning it into a
-virtualenv.
-
+Install the distribution as a normal egg into your Zope environment.
 
 Configuration
 -------------
@@ -26,8 +22,8 @@ Place a ``five.customerize-configure.zcml`` file into your instance's
 
   <include package="five.customerize" />
 
-Alternatively, you can also add this line to the bottom of
-``etc/site.zcml``.
+Alternatively, you can also add this line to the bottom of ``etc/site.zcml``
+or include the line into another packages ``configure.zcml``.
 
 
 Running the Tests
