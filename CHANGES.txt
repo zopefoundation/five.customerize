@@ -4,6 +4,8 @@ CHANGES
 1.0.1 - unreleased
 ------------------
 
+- Made tests compatible with PluggableAuthService 1.7.3
+  [esteele]
 
 1.0 - 2010-06-13
 ----------------

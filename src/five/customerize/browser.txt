@@ -15,7 +15,7 @@ Making a site
 -------------
 
     >>> uf = app.acl_users
-    >>> uf._doAddUser('manager', 'r00t', ['Manager'], [])
+    >>> _ignore = uf._doAddUser('manager', 'r00t', ['Manager'], [])
 
 Create the test browser we'll be using:
 
