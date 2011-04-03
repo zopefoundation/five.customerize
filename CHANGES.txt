@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-1.0.1 - unreleased
+1.0.1 - 2011-04-03
 ------------------
 
 - Made tests compatible with PluggableAuthService 1.7.3
