@@ -66,6 +66,13 @@ def mangleAbsoluteFilename(filename):
     pieces = dir.split(sep)
     if pieces[0] == '':
         pieces = pieces[1:]
+
+    # get pieces that comes after the last folder whose name starts by a dot
+    for index, piece in enumerate(reversed(pieces)):
+        if piece.startswith('.'):
+            pieces = pieces[-index:]
+            break
+
     while pieces:
         try:
             resolve('.'.join(pieces))

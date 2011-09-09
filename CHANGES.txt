@@ -4,6 +4,9 @@ CHANGES
 1.0.2 - unreleased
 ------------------
 
+- Fixed: mangle works when a template has in its path
+  a folder which name starts with a dot.
+  [thomasdesvenain]
 
 1.0.1 - 2011-04-03
 ------------------
