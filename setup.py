@@ -15,7 +15,7 @@
 
 from setuptools import setup
 
-version = '1.0.2dev'
+version = '1.0.2'
 
 setup(name = 'five.customerize',
       version = version,
