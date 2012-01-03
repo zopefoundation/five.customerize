@@ -7,7 +7,7 @@
       id="five.AddTTWViewTemplate"
       title="Five: Add TTW View Template"
       />
-  
+
   <five:registerClass
       class=".zpt.TTWViewTemplate"
       meta_type="TTW View Template"

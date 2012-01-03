@@ -44,7 +44,7 @@ def mangleAbsoluteFilename(filename):
     For example, let's take Five's configure.zcml as an example.  We
     assemble it in an OS-independent way so this test works on all
     platforms:
-    
+
       >>> def filesystemPath(*elements):
       ...     return sep.join(elements)
 
