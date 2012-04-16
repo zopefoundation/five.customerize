@@ -109,6 +109,11 @@ class TTWViewTemplateRenderer(object):
     def __of__(self, obj):
         return self
 
+    # Make sure this object passes the ZPublisher's security validation
+    @property
+    def __parent__(self):
+        return self.context
+
 
 class TTWViewletRenderer(object):
     """ analogon to TTWViewTemplateRenderer for viewlets """
