@@ -4,7 +4,7 @@ CHANGES
 1.0.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Removed dependency and support for zope.app.pagetemplate.
 
 
 1.0.3 (2012-05-07)

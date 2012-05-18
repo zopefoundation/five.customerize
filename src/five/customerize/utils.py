@@ -3,15 +3,13 @@ from AccessControl import Unauthorized
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile as Z2PTF
 from zope.pagetemplate.pagetemplatefile import PageTemplateFile as Z3PTF
 from Products.Five.browser.pagetemplatefile import BoundPageTemplate as Z2BPT
-from zope.app.pagetemplate.viewpagetemplatefile import BoundPageTemplate as Z3BPT
 
 
 def isTemplate(obj):
     """ check if the given object is a or is derived from a template class """
     # TODO: we should really check via interfaces, i.e. `providedBy` here,
     #       but the only class using interfaces atm is Z3PTF :(
-    return isinstance(obj, Z2PTF) or isinstance(obj, Z3PTF) or \
-        isinstance(obj, Z2BPT) or isinstance(obj, Z3BPT)
+    return isinstance(obj, (Z2PTF, Z3PTF, Z2BPT))
 
 
 def findViewletTemplate(viewlet):
