@@ -11,29 +11,29 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" Setup for five.customerize package """
 
 from setuptools import setup
 
-version = '1.1.1.dev0'
+__version__ = '1.1.1.dev0'
 
-setup(name = 'five.customerize',
-      version = version,
-      description = 'TTW customization of template-based Zope views',
-      long_description = (open('README.txt').read() + "\n" +
-                          open('CHANGES.txt').read()),
-      keywords = 'zope views templates customization ttw',
-      author = 'Zope Foundation and Contributors',
-      author_email = 'z3-five@codespeak.net',
-      url = 'http://pypi.python.org/pypi/five.customerize',
-      license = 'ZPL 2.1',
-      packages = ['five', 'five.customerize'],
-      package_dir = {'': 'src'},
-      namespace_packages = ['five',],
-      include_package_data = True,
-      platforms = 'Any',
-      zip_safe = False,
-      install_requires=[
+setup(
+    name='five.customerize',
+    version=__version__,
+    description='TTW customization of template-based Zope views',
+    long_description=(open('README.rst').read() + "\n" +
+                      open('CHANGES.rst').read()),
+    keywords='zope views templates customization ttw',
+    author='Zope Foundation and Contributors',
+    author_email='zope-dev@zope.org',
+    url='http://pypi.python.org/pypi/five.customerize',
+    license='ZPL 2.1',
+    packages=['five', 'five.customerize'],
+    package_dir={'': 'src'},
+    namespace_packages=['five'],
+    include_package_data=True,
+    platforms='Any',
+    zip_safe=False,
+    install_requires=[
         'setuptools',
         'plone.portlets',
         'zope.component',
@@ -51,8 +51,8 @@ setup(name = 'five.customerize',
         'transaction',
         'Acquisition',
         'Zope2',
-      ],
-      classifiers = [
+    ],
+    classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Zope2',
@@ -60,5 +60,5 @@ setup(name = 'five.customerize',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
-      ],
+    ],
 )
