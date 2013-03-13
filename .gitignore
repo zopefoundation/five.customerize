@@ -8,7 +8,7 @@ man
 parts
 
 __pycache__
-.*
+.installed.cfg
 *.dll
 *.pyc
 *.pyo
