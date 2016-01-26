@@ -215,7 +215,13 @@ available to the customized local view.  We create one of these views
   ...     __name__ = 'mystaticview.html'
   ...     def foo_method(self):
   ...         return 'baz'
-  >>> from Products.Five.browser.metaconfigure import makeClassForTemplate
+
+  >>> try:
+  ...     from Products.Five.browser.metaconfigure import makeClassForTemplate
+  ... except ImportError:
+  ...     makeClassForTemplate = None
+  ...     from Products.Five.browser.metaconfigure import SimpleViewClass
+
 
   # BBB Zope 2.12
   >>> try:
@@ -224,10 +230,23 @@ available to the customized local view.  We create one of these views
   ...     from Products.Five.security import getSecurityInfo, protectClass
 
   >>> from App.class_init import InitializeClass
-  >>> cdict = getSecurityInfo(TestView)
-  >>> cdict['__name__'] = 'simpleview.html'
-  >>> viewclass = makeClassForTemplate('testviewtemplate.pt', globals=globals(),
-  ... bases=(TestView,), cdict=cdict, name='simpleview.html')
+  >>> viewclass = None
+  >>> if makeClassForTemplate:
+  ...     cdict = getSecurityInfo(TestView)
+  ...     cdict['__name__'] = 'simpleview.html'
+  ...     viewclass = makeClassForTemplate(
+  ...         'testviewtemplate.pt',
+  ...         globals=globals(),
+  ...         bases=(TestView,),
+  ...         cdict=cdict,
+  ...         name='simpleview.html'
+  ...     )
+  ... else:
+  ...     viewclass = SimpleViewClass(
+  ...         'testviewtemplate.pt',
+  ...         bases=(TestView,),
+  ...         name='simpleview.html'
+  ...     )  
   >>> protectClass(viewclass, 'zope.Public')
   >>> InitializeClass(viewclass)
   >>> from zope.component import provideAdapter
