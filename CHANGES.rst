@@ -4,7 +4,8 @@ CHANGES
 1.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix test to work with Zope 4, where ``makeClassForTemplate`` was removed and replaced with ``SimpleViewClass``.
+  [thet]
 
 
 1.1 (2012-08-30)
