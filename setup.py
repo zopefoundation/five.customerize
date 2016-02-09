@@ -25,7 +25,7 @@ setup(
     keywords='zope views templates customization ttw',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
-    url='http://pypi.python.org/pypi/five.customerize',
+    url='https://pypi.python.org/pypi/five.customerize',
     license='ZPL 2.1',
     packages=['five', 'five.customerize'],
     package_dir={'': 'src'},
@@ -59,6 +59,7 @@ setup(
         'License :: OSI Approved :: Zope Public License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ],
 )
