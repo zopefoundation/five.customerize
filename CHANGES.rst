@@ -7,6 +7,8 @@ CHANGES
 - Fix test to work with Zope 4, where ``makeClassForTemplate`` was removed and replaced with ``SimpleViewClass``.
   [thet]
 
+- Remove deprecatared __of__ for BrowserViews
+  [MrTango]
 
 1.1 (2012-08-30)
 ----------------
