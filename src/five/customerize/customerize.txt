@@ -173,7 +173,7 @@ Now look it up as manager and compare its output:
   template:  <TTWViewTemplate at customize.pt>
   request:   <HTTPRequest, ...>
   view:      <five.customerize.zpt.TTWView ...>
-  modules:   <Products.PageTemplates.ZRPythonExpr._SecureModuleImporter instance at ...>
+  modules:   <Products.PageTemplates.ZRPythonExpr._SecureModuleImporter object at ...>
   options:   {'args': ()}
   nothing:
   <BLANKLINE>
