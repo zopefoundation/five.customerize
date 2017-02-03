@@ -42,16 +42,20 @@ setup(
         'zope.interface',
         'zope.lifecycleevent',
         'zope.pagetemplate',
-        'zope.publisher',
         'zope.schema',
-        'zope.site',
-        'zope.testing',
         'zope.traversing',
         'zope.viewlet',
-        'transaction',
         'Acquisition',
         'Zope2',
     ],
+    extras_require={
+        'test': [
+            'zope.publisher',
+            'zope.site',
+            'zope.testing',
+            'transaction',
+        ]
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
