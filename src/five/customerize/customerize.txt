@@ -83,7 +83,6 @@ registered at):
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"zptviews.html")
-  >>> view = view.__of__(item)
   >>> from pprint import pprint
   >>> viewnames = [reg.name for reg in view.templateViewRegistrations()]
   >>> viewnames.sort()
@@ -101,7 +100,6 @@ the source of its template:
   >>> from Acquisition import aq_base
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
-  >>> view = view.__of__(item)
   >>> template = view.templateFromViewName(u'customizezpt.html')
   >>> aq_base(template)
   <...PageTemplateFile ...>
@@ -170,15 +168,14 @@ Now look it up as manager and compare its output:
   >>> self.setRoles(['Manager',])
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
-  >>> view = view.__of__(item)
   >>> print view() #doctest: +ELLIPSIS
   context:   <SimpleContent at item>
   template:  <TTWViewTemplate at customize.pt>
   request:   <HTTPRequest, ...>
   view:      <five.customerize.zpt.TTWView ...>
-  modules:   <Products.PageTemplates.ZRPythonExpr._SecureModuleImporter instance at ...>
+  modules:   <Products.PageTemplates.ZRPythonExpr._SecureModuleImporter object at ...>
   options:   {'args': ()}
-  nothing:   
+  nothing:
   <BLANKLINE>
 
 5. Deleting view templates
@@ -215,7 +212,13 @@ available to the customized local view.  We create one of these views
   ...     __name__ = 'mystaticview.html'
   ...     def foo_method(self):
   ...         return 'baz'
-  >>> from Products.Five.browser.metaconfigure import makeClassForTemplate
+
+  >>> try:
+  ...     from Products.Five.browser.metaconfigure import makeClassForTemplate
+  ... except ImportError:
+  ...     makeClassForTemplate = None
+  ...     from Products.Five.browser.metaconfigure import SimpleViewClass
+
 
   # BBB Zope 2.12
   >>> try:
@@ -224,10 +227,23 @@ available to the customized local view.  We create one of these views
   ...     from Products.Five.security import getSecurityInfo, protectClass
 
   >>> from App.class_init import InitializeClass
-  >>> cdict = getSecurityInfo(TestView)
-  >>> cdict['__name__'] = 'simpleview.html'
-  >>> viewclass = makeClassForTemplate('testviewtemplate.pt', globals=globals(),
-  ... bases=(TestView,), cdict=cdict, name='simpleview.html')
+  >>> viewclass = None
+  >>> if makeClassForTemplate:
+  ...     cdict = getSecurityInfo(TestView)
+  ...     cdict['__name__'] = 'simpleview.html'
+  ...     viewclass = makeClassForTemplate(
+  ...         'testviewtemplate.pt',
+  ...         globals=globals(),
+  ...         bases=(TestView,),
+  ...         cdict=cdict,
+  ...         name='simpleview.html'
+  ...     )
+  ... else:
+  ...     viewclass = SimpleViewClass(
+  ...         'testviewtemplate.pt',
+  ...         bases=(TestView,),
+  ...         name='simpleview.html'
+  ...     )
   >>> protectClass(viewclass, 'zope.Public')
   >>> InitializeClass(viewclass)
   >>> from zope.component import provideAdapter
