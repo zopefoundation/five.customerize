@@ -39,5 +39,3 @@ def test_suite():
                                setUp=setUp)
         ])
 
-if __name__ == '__main__':
-    main(defaultTest='test_suite')

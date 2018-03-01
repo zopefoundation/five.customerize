@@ -8,7 +8,7 @@ renderer by calling as if it were a view factory:
     >>> template = TTWViewTemplate('test_template', '<html></html>')
     >>> template = template.__of__(app)
     >>> renderer = template(self.folder, None)
-    >>> print renderer()
+    >>> print(renderer())
     <html></html>
 
 We now add some more complex TAL expressions to our template, and
@@ -22,7 +22,7 @@ ensure that it obtains the passed in request and context for rendering:
     >>> from zope.publisher.browser import TestRequest
     >>> request = TestRequest(environ={'foo': 'bar'})
     >>> renderer = template(self.folder, request)
-    >>> print renderer()
+    >>> print(renderer())
     test_folder_1_
     bar
     None
