@@ -3,7 +3,7 @@ from zope.viewlet.viewlet import ViewletBase
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 from zope.viewlet.interfaces import IViewlet, IViewletManager
-from zope.interface import implements
+from zope.interface import implementer
 
 from five.customerize.interfaces import ITTWViewTemplate
 from five.customerize.utils import checkPermission
@@ -11,9 +11,9 @@ from plone.portlets.interfaces import IPortletRenderer
 from plone.portlets.interfaces import IPortletManager
 
 
+@implementer(ITTWViewTemplate)
 class TTWViewTemplate(ZopePageTemplate):
     """A template class used to generate Zope 3 views TTW"""
-    implements(ITTWViewTemplate)
 
     manage_options = (
         ZopePageTemplate.manage_options[0],
@@ -115,9 +115,9 @@ class TTWViewTemplateRenderer(object):
         return self.context
 
 
+@implementer(IViewlet)
 class TTWViewletRenderer(object):
     """ analogon to TTWViewTemplateRenderer for viewlets """
-    implements(IViewlet)
 
     __allow_access_to_unprotected_subobjects__ = True
 
@@ -175,9 +175,9 @@ class TTWViewletRenderer(object):
         return self
 
 
+@implementer(IPortletRenderer)
 class TTWPortletRenderer(object):
     """ analogon to TTWViewletRenderer for portlets """
-    implements(IPortletRenderer)
 
     __allow_access_to_unprotected_subobjects__ = True
 
