@@ -6,14 +6,8 @@ from zope.component import testing, provideAdapter
 from zope.traversing.adapters import DefaultTraversable
 from zope.publisher.browser import BrowserLanguages
 from zope.publisher.http import HTTPCharsets
-from zope.site.hooks import setHooks
-
-# BBB Zope 2.12
-try:
-    from Zope2.App.zcml import load_config
-    load_config # pyflakes
-except ImportError:
-    from Products.Five.zcml import load_config
+from zope.component.hooks import setHooks
+from Zope2.App.zcml import load_config
 
 
 def setUp(test):

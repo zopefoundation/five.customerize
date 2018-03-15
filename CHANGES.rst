@@ -1,8 +1,10 @@
 CHANGES
 =======
 
-1.1.1 (unreleased)
-------------------
+2.0 (unreleased)
+----------------
+
+- Drop support for Zope versions older than 4.0
 
 - Fix test to work with Zope 4, where ``makeClassForTemplate`` was removed and replaced with ``SimpleViewClass``.
   [thet]
