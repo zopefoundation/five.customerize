@@ -10,6 +10,7 @@ parts
 
 __pycache__
 .installed.cfg
+.mr.developer.cfg
 *.dll
 *.pyc
 *.pyo
