@@ -149,7 +149,7 @@ change the template to give us some info output:
 In order to be able to look up the customized view now, we need to
 make the site the current site:
 
-  >>> from zope.site.hooks import setSite
+  >>> from zope.component.hooks import setSite
   >>> setSite(site)
 
 The newly registered adapter has an explicit security check that
@@ -225,7 +225,7 @@ available to the customized local view.  We create one of these views
   ... except ImportError:
   ...     from Products.Five.security import getSecurityInfo, protectClass
 
-  >>> from App.class_init import InitializeClass
+  >>> from AccessControl.class_init import InitializeClass
   >>> viewclass = None
   >>> if makeClassForTemplate:
   ...     cdict = getSecurityInfo(TestView)

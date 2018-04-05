@@ -248,4 +248,3 @@ def unregisterViewWhenZPTIsDeleted(zpt, event):
             components.unregisterAdapter(reg.factory, reg.required,
                                          reg.provided, reg.name)
             break
-
