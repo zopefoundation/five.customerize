@@ -63,7 +63,7 @@ Now the site provides ``IObjectManagerSite``:
 
 And it has a site manager (component registry):
 
-  >>> site.getSiteManager() #doctest: +ELLIPSIS
+  >>> site.getSiteManager() # doctest: +ELLIPSIS
   <PersistentComponents ...>
 
 
@@ -107,7 +107,7 @@ the source of its template:
   >>> os.path.basename(template.filename)
   'customize.pt'
 
-  >>> print view.templateCodeFromViewName(u'customizezpt.html') #doctest: +ELLIPSIS
+  >>> print(view.templateCodeFromViewName(u'customizezpt.html').decode('utf8')) # doctest: +ELLIPSIS
   <html metal:use-macro="context/@@standard_macros/view"
         i18n:domain="zope">
   ...
@@ -124,7 +124,7 @@ That actually creates a TTWViewTemplate object in the nearest site
 above us should be targeted)
 
   >>> zpt = getattr(site, 'customize.pt')
-  >>> print zpt.read() #doctest: +ELLIPSIS
+  >>> print(zpt.read()) # doctest: +ELLIPSIS
   <html metal:use-macro="context/@@standard_macros/view"
         i18n:domain="zope">
   ...
@@ -158,25 +158,24 @@ so calling it will fail unless logged in:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
-  >>> print view()
+  >>> print(view())
   Traceback (most recent call last):
   ...
-  Unauthorized: The current user does not have the required "Manage Five local sites" permission
+  AccessControl.unauthorized.Unauthorized: The current user does not have the required "Manage Five local sites" permission
 
 Now look it up as manager and compare its output:
 
   >>> self.setRoles(['Manager',])
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
-  >>> print view() #doctest: +ELLIPSIS
+  >>> print(view()) # doctest: +ELLIPSIS
   context:   <SimpleContent at item>
   template:  <TTWViewTemplate at customize.pt>
   request:   <HTTPRequest, ...>
-  view:      <five.customerize.zpt.TTWView ...>
+  view:      <five.customerize.zpt.TTWView...>
   modules:   <Products.PageTemplates.ZRPythonExpr._SecureModuleImporter object at ...>
   options:   {'args': ()}
-  nothing:
-  <BLANKLINE>
+  nothing:...
 
 5. Deleting view templates
 --------------------------
@@ -191,7 +190,7 @@ Now the view look-up is back to the old way:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
-  >>> print open(view.index.filename, 'rb').read() #doctest: +ELLIPSIS
+  >>> print(open(view.index.filename, 'rb').read().decode('utf8')) #doctest: +ELLIPSIS
   <html metal:use-macro="context/@@standard_macros/view"
         i18n:domain="zope">
   ...
@@ -256,7 +255,7 @@ Now we retrieve the view and make sure it does what it should:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"simpleview.html")
-  >>> print view()
+  >>> print(view())
   <html>
   ...
   A simple view template with a class
@@ -277,7 +276,7 @@ And render it again:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"simpleview.html")
-  >>> print view()
+  >>> print(view())
   A customized view
   baz
 
