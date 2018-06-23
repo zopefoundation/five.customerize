@@ -128,7 +128,7 @@ class CustomizationView(BrowserView):
         template = self.templateFromViewName(viewname)
         #XXX: we can't do template.read() here because of a bug in
         # Zope 3's ZPT implementation.
-        return open(template.filename, 'rb').read()
+        return open(template.filename, 'rb').read().decode('utf-8')
 
     def permissionFromViewName(self, viewname):
         view = getMultiAdapter((self.context, self.request), name=viewname)

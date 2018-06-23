@@ -107,7 +107,7 @@ the source of its template:
   >>> os.path.basename(template.filename)
   'customize.pt'
 
-  >>> print(view.templateCodeFromViewName(u'customizezpt.html').decode('utf8')) # doctest: +ELLIPSIS
+  >>> print(view.templateCodeFromViewName(u'customizezpt.html')) # doctest: +ELLIPSIS
   <html metal:use-macro="context/@@standard_macros/view"
         i18n:domain="zope">
   ...
