@@ -59,7 +59,7 @@ Let's see if we can view it:
 
     >>> browser.handleErrors = False
     >>> browser.open('http://localhost/folder/myttwtemplate.html')
-    >>> print browser.contents
+    >>> print(browser.contents)
     hello
 
 Now we edit our view template TTW:
@@ -71,7 +71,7 @@ Now we edit our view template TTW:
     ... <span tal:replace="python:repr(view)"/>'''
     >>> browser.getControl('Save Changes').click()
     >>> browser.open('http://localhost/folder/myttwtemplate.html?foo=bar')
-    >>> print browser.contents
+    >>> print(browser.contents)
     folder
     bar
     None
@@ -92,7 +92,7 @@ Make and register a view that we can customize with a TTWViewTemplate:
     >>> provideAdapter(TestView, (IObjectManager, IDefaultBrowserLayer),
     ...                    Interface, name='mystaticview.html')
     >>> browser.open('http://localhost/folder/mystaticview.html')
-    >>> print browser.contents
+    >>> print(browser.contents)
     Original View
 
 Pass that view to the constructor for a new TTWViewTemplate, and register
@@ -108,7 +108,7 @@ it locally to override the static view:
 Now we browse the view to ensure that is has changed:
 
     >>> browser.open('http://localhost/folder/mystaticview.html')
-    >>> print browser.contents
+    >>> print(browser.contents)
     Not so static
 
 Edit the template to make it dynamic and see if we have access to the
@@ -120,7 +120,7 @@ view methods:
     ... <span tal:replace="view/foo_method"/>'''
     >>> browser.getControl('Save Changes').click()
     >>> browser.open('http://localhost/folder/mystaticview.html')
-    >>> print browser.contents
+    >>> print(browser.contents)
     Customized
     baz
 
