@@ -15,7 +15,7 @@ CHANGES
 - Remove deprecatared __of__ for BrowserViews
   [MrTango]
 
-- Switch test setup to use plone.testing
+- Switch test setup to use plone.testing.
 
 
 1.1 (2012-08-30)
