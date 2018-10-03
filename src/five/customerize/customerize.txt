@@ -63,7 +63,7 @@ Now the site provides ``IObjectManagerSite``:
 
 And it has a site manager (component registry):
 
-  >>> site.getSiteManager() #doctest: +ELLIPSIS
+  >>> site.getSiteManager() # doctest: +ELLIPSIS
   <PersistentComponents ...>
 
 
@@ -161,14 +161,14 @@ so calling it will fail unless logged in:
   >>> print(view())  #doctest: +ELLIPSIS
   Traceback (most recent call last):
   ...
-  Unauthorized: The current user does not have the required "Manage Five local sites" permission
+  AccessControl.unauthorized.Unauthorized: The current user does not have the required "Manage Five local sites" permission
 
 Now look it up as manager and compare its output:
 
   >>> self.setRoles(['Manager',])
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
-  >>> print(view())
+  >>> print(view()) # doctest: +ELLIPSIS
   context:   <SimpleContent at item>
   template:  <TTWViewTemplate at customize.pt>
   request:   <HTTPRequest, ...>

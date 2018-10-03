@@ -19,7 +19,7 @@ __version__ = '2.0.dev0'
 setup(
     name='five.customerize',
     version=__version__,
-    description='TTW customization of template-based Zope views',
+    description='TTW customization of template-based Zope browser views',
     long_description=(open('README.rst').read() + "\n" +
                       open('CHANGES.rst').read()),
     keywords='zope views templates customization ttw',
@@ -64,6 +64,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ],
 )

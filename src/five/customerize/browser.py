@@ -1,23 +1,23 @@
-from os.path import sep, isabs, split, basename
+# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
-
-from Products.Five.component.interfaces import IObjectManagerSite
-from Products.Five.component import findSite
 from Products.Five.browser import BrowserView
-
-from zope.interface import providedBy, Interface
+from Products.Five.component import findSite
+from Products.Five.component.interfaces import IObjectManagerSite
+from five.customerize.interfaces import IViewTemplateContainer
+from five.customerize.zpt import TTWViewTemplate
+from os.path import sep, isabs, split, basename
 from zope.component import getGlobalSiteManager
 from zope.component import getMultiAdapter, getSiteManager
 from zope.component import getUtility, queryUtility
 from zope.dottedname.resolve import resolve
+from zope.interface import providedBy, Interface
 from zope.interface.interfaces import IInterface
-from zope.schema.interfaces import IVocabularyFactory
 from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.schema.interfaces import IVocabularyFactory
 from zope.traversing.browser import absoluteURL
 
-from five.customerize.zpt import TTWViewTemplate
-from five.customerize.interfaces import IViewTemplateContainer
+import six
 
 
 # This method was copied from zope.app.apidoc.presentation
@@ -128,7 +128,10 @@ class CustomizationView(BrowserView):
         template = self.templateFromViewName(viewname)
         #XXX: we can't do template.read() here because of a bug in
         # Zope 3's ZPT implementation.
-        return open(template.filename, 'rb').read()
+        data = open(template.filename, 'rb').read()
+        if six.PY2:
+            return data
+        return data.decode('utf-8')
 
     def permissionFromViewName(self, viewname):
         view = getMultiAdapter((self.context, self.request), name=viewname)
