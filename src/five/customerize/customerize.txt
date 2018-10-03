@@ -21,13 +21,7 @@ global view component.  The steps in this story are:
 Setup
 -----
 
-Make this test a usable module
-
-  >>> from zope.testing import module
-  >>> module.setUp(test, name='five.customerize.testcustomerize')
-
-XXX: we are using root as the app name
-  >>> root = self.folder
+  >>> app = layer['app']
 
 
 1. Turning an ObjectManager into a site
@@ -41,8 +35,8 @@ Let's create a folder that we'll turn into a Zope3-style site:
 We need to add it to the root so that objects contained in it have a
 proper acquisition chain all the way to the top:
 
-  >>> id = root._setObject('site', site)
-  >>> site = root.site
+  >>> id = app._setObject('site', site)
+  >>> site = app.site
 
 Now we make this a real site by using a view that a) sets
 ``IObjectManagerSite``, b) sets a traversal hook and c) gives the site
@@ -50,7 +44,7 @@ a component registration object (formerly known as site manager):
 
   >>> import zope.component
   >>> from zope.publisher.browser import TestRequest
-  >>> request = root.REQUEST
+  >>> request = app.REQUEST
   >>> view = zope.component.getMultiAdapter((site, request),
   ...                                       name=u"components.html")
   >>> view.makeSite()
@@ -101,8 +95,8 @@ the source of its template:
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
   >>> template = view.templateFromViewName(u'customizezpt.html')
-  >>> aq_base(template)
-  <...PageTemplateFile ...>
+  >>> 'PageTemplateFile' in repr(aq_base(template))
+  True
   >>> import os.path
   >>> os.path.basename(template.filename)
   'customize.pt'
@@ -165,7 +159,10 @@ so calling it will fail unless logged in:
 
 Now look it up as manager and compare its output:
 
-  >>> self.setRoles(['Manager',])
+  >>> from plone.testing.zope import login
+  >>> app['acl_users'].userFolderAddUser('admin', 'secret', ['Manager'], [])
+  <User 'admin'>
+  >>> login(app['acl_users'], 'admin')
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
   >>> print(view()) # doctest: +ELLIPSIS
@@ -183,8 +180,7 @@ Now look it up as manager and compare its output:
 Once in a while we would like to get rid of the customized view.  The
 easiest way to do that is to simply delete the template:
 
-  >>> if True:
-  ...     site._delObject('customize.pt')
+  >>> site._delObject('customize.pt')
 
 Now the view look-up is back to the old way:
 
@@ -218,13 +214,7 @@ available to the customized local view.  We create one of these views
   ...     makeClassForTemplate = None
   ...     from Products.Five.browser.metaconfigure import SimpleViewClass
 
-
-  # BBB Zope 2.12
-  >>> try:
-  ...     from AccessControl.security import getSecurityInfo, protectClass
-  ... except ImportError:
-  ...     from Products.Five.security import getSecurityInfo, protectClass
-
+  >>> from AccessControl.security import getSecurityInfo, protectClass
   >>> from AccessControl.class_init import InitializeClass
   >>> viewclass = None
   >>> if makeClassForTemplate:
@@ -255,12 +245,8 @@ Now we retrieve the view and make sure it does what it should:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"simpleview.html")
-  >>> print(view())
-  <html>
-  ...
-  A simple view template with a class
-  baz
-  ...
+  >>> 'A simple view template with a class' in view()
+  True
 
 And we customize it:
 
@@ -276,13 +262,5 @@ And render it again:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"simpleview.html")
-  >>> print(view())
-  A customized view
-  baz
-
-Clean up:
----------
-
-  >>> module.tearDown(test, name='five.customerize.testcustomerize')
-  >>> from zope.testing.cleanup import cleanUp
-  >>> cleanUp()
+  >>> 'A customized view' in view()
+  True

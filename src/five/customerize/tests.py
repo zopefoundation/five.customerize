@@ -1,17 +1,38 @@
-from unittest import TestSuite, main
-from Testing.ZopeTestCase import ZopeDocFileSuite
-from Testing.ZopeTestCase import FunctionalDocFileSuite
-
-from zope.component import testing, provideAdapter
-from zope.traversing.adapters import DefaultTraversable
-from zope.publisher.browser import BrowserLanguages
-from zope.publisher.http import HTTPCharsets
-from zope.component.hooks import setHooks
-from Zope2.App.zcml import load_config
+from plone.testing import Layer
+from plone.testing import layered
+from plone.testing import zca
+from plone.testing import zope
+from Products.Five.browser import BrowserView
+from zope.configuration import xmlconfig
 
 import doctest
 import re
 import six
+import unittest
+
+
+class FiveCustomerizeLayer(Layer):
+    defaultBases = (zope.STARTUP,)
+
+    def setUp(self):
+        # Stack a new configuration context
+        self['configurationContext'] = context = zca.stackConfigurationContext(
+            self.get('configurationContext'))
+
+        import Products.Five
+        import five.customerize
+        xmlconfig.file('configure.zcml', Products.Five, context=context)
+        xmlconfig.file('configure.zcml', five.customerize, context=context)
+
+    def tearDown(self):
+        # Zap the stacked configuration context
+        del self['configurationContext']
+
+
+FIVE_CUSTOMERIZE_FIXTURE = FiveCustomerizeLayer()
+
+FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING = zope.FunctionalTesting(
+    bases=(FIVE_CUSTOMERIZE_FIXTURE,), name="five.customerize:FUNCTIONAL")
 
 
 class Py23DocChecker(doctest.OutputChecker):
@@ -22,32 +43,34 @@ class Py23DocChecker(doctest.OutputChecker):
         return doctest.OutputChecker.check_output(self, want, got, optionflags)
 
 
-def setUp(test):
-    testing.setUp(test)
-    provideAdapter(DefaultTraversable, (None,))
-    provideAdapter(BrowserLanguages)
-    provideAdapter(HTTPCharsets)
+class TestView(BrowserView):
+    """A view class"""
+    __name__ = 'mystaticview.html'
 
-    import Products.Five
-    import five.customerize
-    load_config('configure.zcml', package=Products.Five)
-    load_config('configure.zcml', package=five.customerize)
-    setHooks()
+    def foo_method(self):
+        return 'baz'
+
+    def __call__(self):
+        return 'Original View'
 
 
 def test_suite():
-    return TestSuite([
-        ZopeDocFileSuite('zpt.txt', package="five.customerize",
-                         setUp=setUp, tearDown=testing.tearDown),
-        ZopeDocFileSuite(
-            'customerize.txt',
-            package="five.customerize",
-            setUp=setUp,
-            checker=Py23DocChecker(),
+    return unittest.TestSuite([
+        layered(
+            doctest.DocFileSuite('zpt.txt'),
+            layer=FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING,
+        ),
+        layered(
+            doctest.DocFileSuite(
+                'customerize.txt',
+                checker=Py23DocChecker(),
             ),
-        FunctionalDocFileSuite('browser.txt', package="five.customerize",
-                               setUp=setUp)
-        ])
-
-if __name__ == '__main__':
-    main(defaultTest='test_suite')
+            layer=FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING,
+        ),
+        layered(
+            doctest.DocFileSuite('browser.txt', globs={
+                'TestView': TestView,
+            }),
+            layer=FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING,
+        ),
+    ])

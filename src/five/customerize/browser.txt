@@ -1,31 +1,18 @@
 Viewing TTWViewTemplates through-the-web
 ========================================
 
-Set Up
-------
-
-Make this test available as a module so that stuff defined in here can
-be pickled properly:
-
-    >>> from zope.testing import module
-    >>> module.setUp(test, name='five.customerize.browsertest')
-
-
 Making a site
 -------------
 
+    >>> app = layer['app']
     >>> uf = app.acl_users
     >>> _ignore = uf._doAddUser('manager', 'r00t', ['Manager'], [])
+    >>> import transaction; transaction.commit()
 
 Create the test browser we'll be using:
 
-    # BBB Zope 2.12
-    >>> try:
-    ...     from Testing.testbrowser import Browser
-    ... except ImportError:
-    ...     from Products.Five.testbrowser import Browser
-
-    >>> browser = Browser()
+    >>> from plone.testing.zope import Browser
+    >>> browser = Browser(app)
     >>> browser.addHeader('Authorization', 'Basic manager:r00t')
 
 Make a folder to use as a local site for component registration:
@@ -52,7 +39,6 @@ XXX: We should be able to do this TTW
     >>> sm = app.folder.getSiteManager()
     >>> sm.registerAdapter(template, (IObjectManager, IDefaultBrowserLayer),
     ...                    Interface, name='myttwtemplate.html')
-    >>> import transaction
     >>> transaction.commit()
 
 Let's see if we can view it:
@@ -78,16 +64,6 @@ Now we edit our view template TTW:
 
 Make and register a view that we can customize with a TTWViewTemplate:
 
-    >>> from Products.Five.browser import BrowserView
-    >>> class TestView(BrowserView):
-    ...     """A view class"""
-    ...     __name__ = 'mystaticview.html'
-    ...     def foo_method(self):
-    ...         return 'baz'
-    ...
-    ...     def __call__(self):
-    ...         return 'Original View'
-
     >>> from zope.component import provideAdapter
     >>> provideAdapter(TestView, (IObjectManager, IDefaultBrowserLayer),
     ...                    Interface, name='mystaticview.html')
@@ -104,6 +80,7 @@ it locally to override the static view:
     >>> sm = app.folder.getSiteManager()
     >>> sm.registerAdapter(template, (IObjectManager, IDefaultBrowserLayer),
     ...                    Interface, name='mystaticview.html')
+    >>> transaction.commit()
 
 Now we browse the view to ensure that is has changed:
 
@@ -123,10 +100,3 @@ view methods:
     >>> print(browser.contents)
     Customized
     baz
-
-Clean up:
----------
-
-    >>> module.tearDown(test, name='five.customerize.browsertest')
-    >>> from zope.testing.cleanup import cleanUp
-    >>> cleanUp()
