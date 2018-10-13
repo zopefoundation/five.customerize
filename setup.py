@@ -51,6 +51,7 @@ setup(
     extras_require={
         'test': [
             'plone.testing',
+            'ZServer',
             'zope.publisher',
             'zope.site',
             'zope.testing',

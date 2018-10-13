@@ -159,7 +159,7 @@ so calling it will fail unless logged in:
 
 Now look it up as manager and compare its output:
 
-  >>> from plone.testing.zope import login
+  >>> from plone.testing.z2 import login
   >>> app['acl_users'].userFolderAddUser('admin', 'secret', ['Manager'], [])
   <User 'admin'>
   >>> login(app['acl_users'], 'admin')

@@ -11,7 +11,7 @@ Making a site
 
 Create the test browser we'll be using:
 
-    >>> from plone.testing.zope import Browser
+    >>> from plone.testing.z2 import Browser
     >>> browser = Browser(app)
     >>> browser.addHeader('Authorization', 'Basic manager:r00t')
 

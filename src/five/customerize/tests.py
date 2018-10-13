@@ -1,7 +1,7 @@
 from plone.testing import Layer
 from plone.testing import layered
 from plone.testing import zca
-from plone.testing import zope
+from plone.testing import z2
 from Products.Five.browser import BrowserView
 from zope.configuration import xmlconfig
 
@@ -12,7 +12,7 @@ import unittest
 
 
 class FiveCustomerizeLayer(Layer):
-    defaultBases = (zope.STARTUP,)
+    defaultBases = (z2.STARTUP,)
 
     def setUp(self):
         # Stack a new configuration context
@@ -31,7 +31,7 @@ class FiveCustomerizeLayer(Layer):
 
 FIVE_CUSTOMERIZE_FIXTURE = FiveCustomerizeLayer()
 
-FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING = zope.FunctionalTesting(
+FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING = z2.FunctionalTesting(
     bases=(FIVE_CUSTOMERIZE_FIXTURE,), name="five.customerize:FUNCTIONAL")
 
 
