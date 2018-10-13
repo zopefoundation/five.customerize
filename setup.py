@@ -50,6 +50,7 @@ setup(
     ],
     extras_require={
         'test': [
+            'plone.testing',
             'zope.publisher',
             'zope.site',
             'zope.testing',
