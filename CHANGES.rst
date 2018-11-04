@@ -1,19 +1,25 @@
 CHANGES
 =======
 
-2.0 (unreleased)
-----------------
+2.0.0 (2018-11-04)
+------------------
+
+Breaking changes:
+
+- Drop support for Zope versions older than 4.0
+
+- Remove deprecatared __of__ for BrowserViews
+  [MrTango]
+
+New features:
 
 - Add support for Python 3
   [pbauer]
 
-- Drop support for Zope versions older than 4.0
+Bug fixes:
 
 - Fix test to work with Zope 4, where ``makeClassForTemplate`` was removed and replaced with ``SimpleViewClass``.
   [thet]
-
-- Remove deprecatared __of__ for BrowserViews
-  [MrTango]
 
 - Switch test setup to use plone.testing.
 
