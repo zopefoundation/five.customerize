@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Minor packaging updates.  [various]
 
 
 2.0.0 (2018-11-04)
