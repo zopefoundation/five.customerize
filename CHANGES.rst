@@ -4,17 +4,7 @@ CHANGES
 2.0.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
-- *add item here*
+- Add support for Python 3.5, 3.7, 3.8 and 3.9.
 
 
 2.0.1 (2020-03-21)

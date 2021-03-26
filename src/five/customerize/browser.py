@@ -1,23 +1,29 @@
-# -*- coding: utf-8 -*-
+from os.path import basename
+from os.path import isabs
+from os.path import sep
+from os.path import split
+
+import six
 from Acquisition import aq_inner
 from Products.Five.browser import BrowserView
 from Products.Five.component import findSite
 from Products.Five.component.interfaces import IObjectManagerSite
-from five.customerize.interfaces import IViewTemplateContainer
-from five.customerize.zpt import TTWViewTemplate
-from os.path import sep, isabs, split, basename
 from zope.component import getGlobalSiteManager
-from zope.component import getMultiAdapter, getSiteManager
-from zope.component import getUtility, queryUtility
+from zope.component import getMultiAdapter
+from zope.component import getSiteManager
+from zope.component import getUtility
+from zope.component import queryUtility
 from zope.dottedname.resolve import resolve
-from zope.interface import providedBy, Interface
+from zope.interface import Interface
+from zope.interface import providedBy
 from zope.interface.interfaces import IInterface
 from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.schema.interfaces import IVocabularyFactory
 from zope.traversing.browser import absoluteURL
 
-import six
+from five.customerize.interfaces import IViewTemplateContainer
+from five.customerize.zpt import TTWViewTemplate
 
 
 # This method was copied from zope.app.apidoc.presentation
@@ -27,7 +33,7 @@ def getViews(iface, type=IRequest):
     for reg in gsm.registeredAdapters():
         if (len(reg.required) > 0 and
             reg.required[-1] is not None and
-            reg.required[-1].isOrExtends(type)):
+                reg.required[-1].isOrExtends(type)):
 
             for required_iface in reg.required[:-1]:
                 if required_iface is None or iface.isOrExtends(required_iface):
@@ -83,6 +89,7 @@ def mangleAbsoluteFilename(filename):
         return filename
     return '.'.join(pieces) + '/' + base
 
+
 class CustomizationView(BrowserView):
 
     def templateViewRegistrations(self):
@@ -90,10 +97,10 @@ class CustomizationView(BrowserView):
             factory = reg.factory
             while hasattr(factory, 'factory'):
                 factory = factory.factory
-            #XXX this should really be dealt with using a marker interface
+            # XXX this should really be dealt with using a marker interface
             # on the view factory
             if hasattr(factory, '__name__') and \
-                   factory.__name__.startswith('SimpleViewClass'):
+                    factory.__name__.startswith('SimpleViewClass'):
                 yield reg
 
     def templateViewRegInfo(self):
@@ -106,7 +113,7 @@ class CustomizationView(BrowserView):
                 'type': reg.required[1].__identifier__,
                 'zptfile': mangleAbsoluteFilename(reg.factory.index.filename),
                 'zcmlfile': mangleAbsoluteFilename(reg.info.file)
-                }
+            }
 
     def viewClassFromViewName(self, viewname):
         view = getMultiAdapter((self.context, self.request), name=viewname)
@@ -126,9 +133,10 @@ class CustomizationView(BrowserView):
 
     def templateCodeFromViewName(self, viewname):
         template = self.templateFromViewName(viewname)
-        #XXX: we can't do template.read() here because of a bug in
+        # XXX: we can't do template.read() here because of a bug in
         # Zope 3's ZPT implementation.
-        data = open(template.filename, 'rb').read()
+        with open(template.filename, 'rb') as f:
+            data = f.read()
         if six.PY2:
             return data
         return data.decode('utf-8')
@@ -161,7 +169,8 @@ class CustomizationView(BrowserView):
         if container is not None:
             viewzpt = container.addTemplate(zpt_id, viewzpt)
         else:
-            site._setObject(zpt_id, viewzpt) #XXXthere could be a naming conflict
+            # XXXthere could be a naming conflict
+            site._setObject(zpt_id, viewzpt)
             viewzpt = getattr(site, zpt_id)
 
         # find out the view registration object so we can get at the
@@ -173,7 +182,7 @@ class CustomizationView(BrowserView):
         components = site.getSiteManager()
         components.registerAdapter(viewzpt, required=reg.required,
                                    provided=reg.provided, name=viewname
-                                   ) #XXX info?
+                                   )  # XXX info?
 
         return viewzpt
 
@@ -181,8 +190,11 @@ class CustomizationView(BrowserView):
         viewzpt = self.doCustomizeTemplate(viewname)
         # to get a "direct" URL we use aq_inner for a straight
         # acquisition chain
-        url = absoluteURL(aq_inner(viewzpt), self.request) + "/manage_workspace"
+        url = absoluteURL(
+            aq_inner(viewzpt),
+            self.request) + "/manage_workspace"
         self.request.response.redirect(url)
+
 
 class RegistrationsView(BrowserView):
 
@@ -192,8 +204,9 @@ class RegistrationsView(BrowserView):
         for reg in components.registeredAdapters():
             if (len(reg.required) == 2 and
                 reg.required[1].isOrExtends(IBrowserRequest) and
-                reg.factory == self.context):
+                    reg.factory == self.context):
                 regs.append(reg)
+
         def regkey(reg):
             return (reg.name, reg.required)
         return sorted(regs, key=regkey)
@@ -217,7 +230,7 @@ class RegistrationsView(BrowserView):
         except (TypeError, ValueError):
             index = None
         if index is None:
-            #XXX: find right exception type
+            # XXX: find right exception type
             raise ValueError("Missing or invalid 'index' parameter.")
         regs = self.viewRegistrations()
         reg = regs[index]

@@ -186,7 +186,8 @@ Now the view look-up is back to the old way:
 
   >>> view = zope.component.getMultiAdapter((item, request),
   ...                                       name=u"customizezpt.html")
-  >>> print(open(view.index.filename, 'rb').read().decode('utf8')) #doctest: +ELLIPSIS
+  >>> with open(view.index.filename, 'rb') as i:
+  ...     print(i.read().decode('utf8')) #doctest: +ELLIPSIS
   <html metal:use-macro="context/@@standard_macros/view"
         i18n:domain="zope">
   ...
