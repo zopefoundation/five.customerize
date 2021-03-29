@@ -1,14 +1,17 @@
-from zope.component import adapter, getSiteManager
-from zope.viewlet.viewlet import ViewletBase
+from plone.portlets.interfaces import IPortletManager
+from plone.portlets.interfaces import IPortletRenderer
+
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
-from zope.lifecycleevent.interfaces import IObjectRemovedEvent
-from zope.viewlet.interfaces import IViewlet, IViewletManager
+from zope.component import adapter
+from zope.component import getSiteManager
 from zope.interface import implementer
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
+from zope.viewlet.interfaces import IViewlet
+from zope.viewlet.interfaces import IViewletManager
+from zope.viewlet.viewlet import ViewletBase
 
 from five.customerize.interfaces import ITTWViewTemplate
 from five.customerize.utils import checkPermission
-from plone.portlets.interfaces import IPortletRenderer
-from plone.portlets.interfaces import IPortletManager
 
 
 @implementer(ITTWViewTemplate)
@@ -18,7 +21,7 @@ class TTWViewTemplate(ZopePageTemplate):
     manage_options = (
         ZopePageTemplate.manage_options[0],
         dict(label='Registrations', action='registrations.html'),
-        ) + ZopePageTemplate.manage_options[2:]
+    ) + ZopePageTemplate.manage_options[2:]
 
     def __init__(self, id, text=None, content_type='text/html', strict=True,
                  encoding='utf-8', view=None, permission=None, name=None):
@@ -29,7 +32,7 @@ class TTWViewTemplate(ZopePageTemplate):
                                               strict)
 
     def __call__(self, context, request, view=None, manager=None, data=None):
-        #XXX raise a sensible exception if context and request are
+        # XXX raise a sensible exception if context and request are
         # omitted, IOW, if someone tries to render the template not as
         # a view.
 
@@ -38,12 +41,13 @@ class TTWViewTemplate(ZopePageTemplate):
         # in which case there's no proper security context yet
         if IPortletManager.providedBy(manager):
             return TTWPortletRenderer(context, request, self, view,
-                manager, data, self.permission)
+                                      manager, data, self.permission)
         if IViewletManager.providedBy(manager):
             return TTWViewletRenderer(context, request, self, view,
-                manager, self.permission)
+                                      manager, self.permission)
         else:
-            return TTWViewTemplateRenderer(context, request, self, self.permission)
+            return TTWViewTemplateRenderer(
+                context, request, self, self.permission)
 
     # overwrite Shared.DC.Scripts.Binding.Binding's before traversal
     # hook that would prevent to look up views for instances of this
@@ -121,7 +125,14 @@ class TTWViewletRenderer(object):
 
     __allow_access_to_unprotected_subobjects__ = True
 
-    def __init__(self, context, request, template, view, manager=None, permission=None):
+    def __init__(
+            self,
+            context,
+            request,
+            template,
+            view,
+            manager=None,
+            permission=None):
         self.context = context
         self.request = request
         self.template = template
@@ -164,7 +175,8 @@ class TTWViewletRenderer(object):
                 class TTWViewlet(view_class, ViewletBase):
                     __allow_access_to_unprotected_subobjects__ = 1
                 view_class._five_customerize_ttw_class = TTWViewlet
-            self.viewlet = TTWViewlet(self.context, self.request, self.view, self.manager)
+            self.viewlet = TTWViewlet(
+                self.context, self.request, self.view, self.manager)
             return self.viewlet
 
     # Zope 2 wants to acquisition-wrap every view object (via __of__).
@@ -181,7 +193,15 @@ class TTWPortletRenderer(object):
 
     __allow_access_to_unprotected_subobjects__ = True
 
-    def __init__(self, context, request, template, view, manager=None, data=None, permission=None):
+    def __init__(
+            self,
+            context,
+            request,
+            template,
+            view,
+            manager=None,
+            data=None,
+            permission=None):
         self.context = context
         self.request = request
         self.template = template
@@ -225,7 +245,12 @@ class TTWPortletRenderer(object):
                 class TTWPortlet(view_class):
                     __allow_access_to_unprotected_subobjects__ = 1
                 view_class._five_customerize_ttw_class = TTWPortlet
-            self.renderer = TTWPortlet(self.context, self.request, self.view, self.manager, self.data)
+            self.renderer = TTWPortlet(
+                self.context,
+                self.request,
+                self.view,
+                self.manager,
+                self.data)
             return self.renderer
 
     @property

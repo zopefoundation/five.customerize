@@ -1,8 +1,8 @@
-from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
+from Products.Five.browser.pagetemplatefile import BoundPageTemplate as Z2BPT
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile as Z2PTF
 from zope.pagetemplate.pagetemplatefile import PageTemplateFile as Z3PTF
-from Products.Five.browser.pagetemplatefile import BoundPageTemplate as Z2BPT
 
 
 def isTemplate(obj):
@@ -18,7 +18,9 @@ def findViewletTemplate(viewlet):
         item = getattr(viewlet, attr, None)
         if isTemplate(item):
             return attr, item
-    attrs = [ attr for attr in dir(viewlet) if isTemplate(getattr(viewlet, attr, None)) ]
+    attrs = [attr
+             for attr in dir(viewlet)
+             if isTemplate(getattr(viewlet, attr, None))]
     if len(attrs) == 1:
         return attrs[0], getattr(viewlet, attrs[0])
     else:
@@ -33,4 +35,3 @@ def checkPermission(permission, context):
         if not sm.checkPermission(permission, context):
             raise Unauthorized('The current user does not have the '
                                'required "%s" permission' % permission)
-

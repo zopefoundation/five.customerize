@@ -14,4 +14,3 @@ class IViewTemplateContainer(Interface):
     def addTemplate(id, template):
         """ add the given ttw view template to the container
             and return it acquisition wrapped in the container """
-
