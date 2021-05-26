@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/zope-product
 [meta]
 template = "zope-product"
-commit-id = "ff37be82c6e4d7c4f0f96f4937f2d14d1aadae67"
+commit-id = "a42b1792f61e841423b04385d644c7e2d4581c1c"
 
 [python]
 with-appveyor = false
@@ -20,6 +20,9 @@ fail-under = 58
 [manifest]
 additional-rules = [
     "include buildout4.cfg",
+    "recursive-include src *.pt",
+    "recursive-include src *.txt",
+    "recursive-include src *.zcml",
     ]
 
 [isort]
