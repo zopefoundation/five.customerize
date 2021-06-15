@@ -21,9 +21,10 @@ ensure that it obtains the passed in request and context for rendering:
     ... <span tal:replace="request/foo"/>
     ... <span tal:replace="python:repr(view)"/>''', 'text/html')
 
-    >>> from zope.publisher.browser import TestRequest
-    >>> request = TestRequest(environ={'foo': 'bar'})
-    >>> renderer = template(app, request)
+    >>> from Testing.makerequest import makerequest
+    >>> app = makerequest(app)
+    >>> app.REQUEST.form = {'foo': 'bar'}
+    >>> renderer = template(app, app.REQUEST)
     >>> print(renderer())
     folder
     bar
