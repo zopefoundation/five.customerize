@@ -6,6 +6,8 @@ CHANGES
 
 - Add support for Python 3.5, 3.7, 3.8 and 3.9.
 
+- Fix tests to run successfully on Zope >= 5.2.1.
+
 
 2.0.1 (2020-03-21)
 ------------------
