@@ -4,7 +4,7 @@ CHANGES
 2.1 (unreleased)
 ----------------
 
-- Add support for Python 3.5, 3.7, 3.8 and 3.9.
+- Add support for Python 3.5, 3.7, 3.8, 3.9, 3.10.
 
 - Fix tests to run successfully on Zope >= 5.2.1.
 
