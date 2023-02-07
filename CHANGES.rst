@@ -8,6 +8,9 @@ CHANGES
 
 - Add support for Python 3.11.
 
+- Move tests.py to a tests folder,
+  this way pytest can find them.
+
 2.1.0 (2022-06-29)
 ------------------
 
