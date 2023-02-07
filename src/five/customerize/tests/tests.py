@@ -62,18 +62,18 @@ class TestView(BrowserView):
 def test_suite():
     return unittest.TestSuite([
         layered(
-            doctest.DocFileSuite('zpt.txt'),
+            doctest.DocFileSuite('../zpt.txt'),
             layer=FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING,
         ),
         layered(
             doctest.DocFileSuite(
-                'customerize.txt',
+                '../customerize.txt',
                 checker=Py23DocChecker(),
             ),
             layer=FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING,
         ),
         layered(
-            doctest.DocFileSuite('browser.txt', globs={
+            doctest.DocFileSuite('../browser.txt', globs={
                 'TestView': TestView,
             }),
             layer=FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING,
