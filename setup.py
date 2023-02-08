@@ -25,7 +25,7 @@ setup(
                       open('CHANGES.rst').read()),
     keywords='zope views templates customization ttw',
     author='Zope Foundation and Contributors',
-    author_email='zope-dev@zope.org',
+    author_email='zope-dev@zope.dev',
     url='https://github.com/zopefoundation/five.customerize',
     project_urls={
         'Issue Tracker': ('https://github.com/zopefoundation/'
