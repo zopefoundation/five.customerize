@@ -1,21 +1,6 @@
 CHANGES
 =======
 
-3.0.1 (unreleased)
-------------------
-
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
-- *add item here*
-
 
 3.0.0 (2024-01-19)
 ------------------
@@ -23,6 +8,7 @@ Bug fixes:
 - Drop support for Python < 3.7.
 
 - Add support for Python 3.11.
+
 
 2.1.0 (2022-06-29)
 ------------------
