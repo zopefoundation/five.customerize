@@ -1,12 +1,17 @@
 CHANGES
 =======
 
-3.0.0 (unreleased)
+3.0.1 (unreleased)
+------------------
+
+
+3.0.0 (2024-01-19)
 ------------------
 
 - Drop support for Python < 3.7.
 
 - Add support for Python 3.11.
+
 
 2.1.0 (2022-06-29)
 ------------------
