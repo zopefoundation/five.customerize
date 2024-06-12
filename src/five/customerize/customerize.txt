@@ -211,7 +211,7 @@ available to the customized local view.  We create one of these views
 
   >>> try:
   ...     from Products.Five.browser.metaconfigure import makeClassForTemplate
-  ... except ImportError:
+  ... except ImportError:  # ModuleNotFoundError cannot be used here
   ...     makeClassForTemplate = None
   ...     from Products.Five.browser.metaconfigure import SimpleViewClass
 

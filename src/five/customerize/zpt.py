@@ -23,13 +23,19 @@ class TTWViewTemplate(ZopePageTemplate):
         dict(label='Registrations', action='registrations.html'),
     ) + ZopePageTemplate.manage_options[2:]
 
-    def __init__(self, id, text=None, content_type='text/html', strict=True,
-                 encoding='utf-8', view=None, permission=None, name=None):
+    def __init__(self,
+                 id,
+                 text=None,
+                 content_type='text/html',
+                 strict=True,
+                 encoding='utf-8',
+                 view=None,
+                 permission=None,
+                 name=None):
         self.view = view
         self.permission = permission
         self.name = name
-        super(TTWViewTemplate, self).__init__(id, text, content_type, encoding,
-                                              strict)
+        super().__init__(id, text, content_type, encoding, strict)
 
     def __call__(self, context, request, view=None, manager=None, data=None):
         # XXX raise a sensible exception if context and request are
@@ -40,14 +46,14 @@ class TTWViewTemplate(ZopePageTemplate):
         # is actually called, because it may be looked up during traversal,
         # in which case there's no proper security context yet
         if IPortletManager.providedBy(manager):
-            return TTWPortletRenderer(context, request, self, view,
-                                      manager, data, self.permission)
+            return TTWPortletRenderer(context, request, self, view, manager,
+                                      data, self.permission)
         if IViewletManager.providedBy(manager):
-            return TTWViewletRenderer(context, request, self, view,
-                                      manager, self.permission)
+            return TTWViewletRenderer(context, request, self, view, manager,
+                                      self.permission)
         else:
-            return TTWViewTemplateRenderer(
-                context, request, self, self.permission)
+            return TTWViewTemplateRenderer(context, request, self,
+                                           self.permission)
 
     # overwrite Shared.DC.Scripts.Binding.Binding's before traversal
     # hook that would prevent to look up views for instances of this
@@ -56,7 +62,7 @@ class TTWViewTemplate(ZopePageTemplate):
         pass
 
 
-class TTWViewTemplateRenderer(object):
+class TTWViewTemplateRenderer:
     """The view object for the TTW View Template.
 
     When a TTWViewTemplate-based view is looked up, an object of this
@@ -80,9 +86,11 @@ class TTWViewTemplateRenderer(object):
         # they generally point to the wrong objects (a template's
         # context usually is what it was acquired from, which isn't
         # what the context is for a view template).
-        bound_names = {'context': self.context,
-                       'request': self.request,
-                       'view': view}
+        bound_names = {
+            'context': self.context,
+            'request': self.request,
+            'view': view
+        }
         template = self.template.__of__(self.context)
         return template._exec(bound_names, args, kwargs)
 
@@ -100,8 +108,10 @@ class TTWViewTemplateRenderer(object):
             if hasattr(view_class, '_five_customerize_ttw_class'):
                 TTWView = view_class._five_customerize_ttw_class
             else:
+
                 class TTWView(view_class):
                     __allow_access_to_unprotected_subobjects__ = 1
+
                 view_class._five_customerize_ttw_class = TTWView
             self.view = TTWView(self.context, self.request)
             return self.view
@@ -120,19 +130,18 @@ class TTWViewTemplateRenderer(object):
 
 
 @implementer(IViewlet)
-class TTWViewletRenderer(object):
+class TTWViewletRenderer:
     """ analogon to TTWViewTemplateRenderer for viewlets """
 
     __allow_access_to_unprotected_subobjects__ = True
 
-    def __init__(
-            self,
-            context,
-            request,
-            template,
-            view,
-            manager=None,
-            permission=None):
+    def __init__(self,
+                 context,
+                 request,
+                 template,
+                 view,
+                 manager=None,
+                 permission=None):
         self.context = context
         self.request = request
         self.template = template
@@ -152,9 +161,11 @@ class TTWViewletRenderer(object):
         # they generally point to the wrong objects (a template's
         # context usually is what it was acquired from, which isn't
         # what the context is for a view template).
-        bound_names = {'context': self.context,
-                       'request': self.request,
-                       'view': viewlet}
+        bound_names = {
+            'context': self.context,
+            'request': self.request,
+            'view': viewlet
+        }
         template = self.template.__of__(self.context)
         return template._exec(bound_names, args, kwargs)
 
@@ -172,11 +183,13 @@ class TTWViewletRenderer(object):
             if hasattr(view_class, '_five_customerize_ttw_class'):
                 TTWViewlet = view_class._five_customerize_ttw_class
             else:
+
                 class TTWViewlet(view_class, ViewletBase):
                     __allow_access_to_unprotected_subobjects__ = 1
+
                 view_class._five_customerize_ttw_class = TTWViewlet
-            self.viewlet = TTWViewlet(
-                self.context, self.request, self.view, self.manager)
+            self.viewlet = TTWViewlet(self.context, self.request, self.view,
+                                      self.manager)
             return self.viewlet
 
     # Zope 2 wants to acquisition-wrap every view object (via __of__).
@@ -188,20 +201,19 @@ class TTWViewletRenderer(object):
 
 
 @implementer(IPortletRenderer)
-class TTWPortletRenderer(object):
+class TTWPortletRenderer:
     """ analogon to TTWViewletRenderer for portlets """
 
     __allow_access_to_unprotected_subobjects__ = True
 
-    def __init__(
-            self,
-            context,
-            request,
-            template,
-            view,
-            manager=None,
-            data=None,
-            permission=None):
+    def __init__(self,
+                 context,
+                 request,
+                 template,
+                 view,
+                 manager=None,
+                 data=None,
+                 permission=None):
         self.context = context
         self.request = request
         self.template = template
@@ -222,9 +234,11 @@ class TTWPortletRenderer(object):
         # they generally point to the wrong objects (a template's
         # context usually is what it was acquired from, which isn't
         # what the context is for a view template).
-        bound_names = {'context': self.context,
-                       'request': self.request,
-                       'view': renderer}
+        bound_names = {
+            'context': self.context,
+            'request': self.request,
+            'view': renderer
+        }
         template = self.template.__of__(self.context)
         return template._exec(bound_names, args, kwargs)
 
@@ -242,15 +256,13 @@ class TTWPortletRenderer(object):
             if hasattr(view_class, '_five_customerize_ttw_class'):
                 TTWPortlet = view_class._five_customerize_ttw_class
             else:
+
                 class TTWPortlet(view_class):
                     __allow_access_to_unprotected_subobjects__ = 1
+
                 view_class._five_customerize_ttw_class = TTWPortlet
-            self.renderer = TTWPortlet(
-                self.context,
-                self.request,
-                self.view,
-                self.manager,
-                self.data)
+            self.renderer = TTWPortlet(self.context, self.request, self.view,
+                                       self.manager, self.data)
             return self.renderer
 
     @property
