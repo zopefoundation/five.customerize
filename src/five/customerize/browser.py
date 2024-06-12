@@ -31,9 +31,8 @@ def getViews(iface, type=IRequest):
     """Get all view registrations for a particular interface."""
     gsm = getGlobalSiteManager()
     for reg in gsm.registeredAdapters():
-        if (len(reg.required) > 0 and
-            reg.required[-1] is not None and
-                reg.required[-1].isOrExtends(type)):
+        if (len(reg.required) > 0 and reg.required[-1] is not None
+                and reg.required[-1].isOrExtends(type)):
 
             for required_iface in reg.required[:-1]:
                 if required_iface is None or iface.isOrExtends(required_iface):
@@ -83,7 +82,7 @@ def mangleAbsoluteFilename(filename):
         try:
             resolve('.'.join(pieces))
             break
-        except (ImportError, ValueError):
+        except (ModuleNotFoundError, ValueError):
             pieces = pieces[1:]
     if not pieces:
         return filename
@@ -104,8 +103,10 @@ class CustomizationView(BrowserView):
                 yield reg
 
     def templateViewRegInfo(self):
+
         def regkey(reg):
             return reg.name
+
         for reg in sorted(self.templateViewRegistrations(), key=regkey):
             yield {
                 'viewname': reg.name,
@@ -163,7 +164,9 @@ class CustomizationView(BrowserView):
         template_file = self.templateCodeFromViewName(viewname)
         viewclass = self.viewClassFromViewName(viewname)
         permission = self.permissionFromViewName(viewname)
-        viewzpt = TTWViewTemplate(zpt_id, template_file, view=viewclass,
+        viewzpt = TTWViewTemplate(zpt_id,
+                                  template_file,
+                                  view=viewclass,
                                   permission=permission)
         container = queryUtility(IViewTemplateContainer)
         if container is not None:
@@ -180,9 +183,10 @@ class CustomizationView(BrowserView):
                 break
 
         components = site.getSiteManager()
-        components.registerAdapter(viewzpt, required=reg.required,
-                                   provided=reg.provided, name=viewname
-                                   )  # XXX info?
+        components.registerAdapter(viewzpt,
+                                   required=reg.required,
+                                   provided=reg.provided,
+                                   name=viewname)  # XXX info?
 
         return viewzpt
 
@@ -190,9 +194,8 @@ class CustomizationView(BrowserView):
         viewzpt = self.doCustomizeTemplate(viewname)
         # to get a "direct" URL we use aq_inner for a straight
         # acquisition chain
-        url = absoluteURL(
-            aq_inner(viewzpt),
-            self.request) + "/manage_workspace"
+        url = absoluteURL(aq_inner(viewzpt),
+                          self.request) + "/manage_workspace"
         self.request.response.redirect(url)
 
 
@@ -202,13 +205,14 @@ class RegistrationsView(BrowserView):
         regs = []
         components = getSiteManager(self.context)
         for reg in components.registeredAdapters():
-            if (len(reg.required) == 2 and
-                reg.required[1].isOrExtends(IBrowserRequest) and
-                    reg.factory == self.context):
+            if (len(reg.required) == 2
+                    and reg.required[1].isOrExtends(IBrowserRequest)
+                    and reg.factory == self.context):
                 regs.append(reg)
 
         def regkey(reg):
             return (reg.name, reg.required)
+
         return sorted(regs, key=regkey)
 
     def getAllInterfaceNames(self):
@@ -244,6 +248,6 @@ class RegistrationsView(BrowserView):
         for_ = getUtility(IInterface, for_name)
         type = getUtility(IInterface, type_name)
         components = getSiteManager(self.context)
-        components.registerAdapter(self.context, (for_, type),
-                                   Interface, name, comment)
+        components.registerAdapter(self.context, (for_, type), Interface, name,
+                                   comment)
         self.request.response.redirect('registrations.html')
