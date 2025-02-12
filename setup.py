@@ -12,7 +12,7 @@
 #
 ##############################################################################
 
-from setuptools import find_packages
+from setuptools import find_namespace_packages
 from setuptools import setup
 
 
@@ -34,9 +34,8 @@ setup(
         'Sources': 'https://github.com/zopefoundation/five.customerize',
     },
     license='ZPL-2.1',
-    packages=find_packages('src'),
+    packages=find_namespace_packages('src'),
     package_dir={'': 'src'},
-    namespace_packages=['five'],
     include_package_data=True,
     platforms='Any',
     zip_safe=False,
