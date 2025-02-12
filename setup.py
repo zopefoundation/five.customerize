@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2004 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -32,14 +32,14 @@ setup(
                           'five.customerize/issues'),
         'Sources': 'https://github.com/zopefoundation/five.customerize',
     },
-    license='ZPL 2.1',
+    license='ZPL-2.1',
     packages=['five', 'five.customerize'],
     package_dir={'': 'src'},
     namespace_packages=['five'],
     include_package_data=True,
     platforms='Any',
     zip_safe=False,
-    python_requires='>=3.8',
+    python_requires='>=3.9',
     install_requires=[
         'setuptools',
         'plone.portlets',
@@ -72,11 +72,11 @@ setup(
         'License :: OSI Approved :: Zope Public License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ],
