@@ -13,6 +13,8 @@ CHANGES
 
 - Drop support for Python 3.7, 3.8.
 
+- Drop Python 2 leftovers.
+
 3.0.0 (2024-01-19)
 ------------------
 

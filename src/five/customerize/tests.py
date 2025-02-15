@@ -1,5 +1,4 @@
 import doctest
-import re
 import unittest
 
 from plone.testing import Layer
@@ -7,7 +6,6 @@ from plone.testing import layered
 from plone.testing import zca
 from plone.testing import zope
 
-import six
 from Products.Five.browser import BrowserView
 from zope.configuration import xmlconfig
 
@@ -39,12 +37,6 @@ FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING = zope.FunctionalTesting(
 
 class Py23DocChecker(doctest.OutputChecker):
     def check_output(self, want, got, optionflags):
-        if six.PY2:
-            got = re.sub(
-                'Unauthorized',
-                'AccessControl.unauthorized.Unauthorized',
-                got)
-            got = re.sub("u'(.*?)'", "'\\1'", got)
         return doctest.OutputChecker.check_output(self, want, got, optionflags)
 
 
