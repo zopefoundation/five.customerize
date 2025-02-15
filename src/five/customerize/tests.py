@@ -35,11 +35,6 @@ FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING = zope.FunctionalTesting(
     bases=(FIVE_CUSTOMERIZE_FIXTURE,), name="five.customerize:FUNCTIONAL")
 
 
-class Py23DocChecker(doctest.OutputChecker):
-    def check_output(self, want, got, optionflags):
-        return doctest.OutputChecker.check_output(self, want, got, optionflags)
-
-
 class TestView(BrowserView):
     """A view class"""
     __name__ = 'mystaticview.html'
@@ -60,7 +55,6 @@ def test_suite():
         layered(
             doctest.DocFileSuite(
                 'customerize.txt',
-                checker=Py23DocChecker(),
             ),
             layer=FIVE_CUSTOMERIZE_FUNCTIONAL_TESTING,
         ),
