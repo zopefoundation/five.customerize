@@ -4,14 +4,14 @@ CHANGES
 4.0 (unreleased)
 ----------------
 
+- Drop support for ``pkg_resources`` namespace and replace it with
+  PEP 420 native namespace.
+  Caution: This change requires to switch all packages in the `five`
+  namespace to versions using a PEP 420 namespace.
 
-- Add support for Python 3.13.
+- Add support for Python 3.12, 3.13.
 
-- Drop support for Python 3.8.
-
-- Add support for Python 3.12.
-
-- Drop support for Python 3.7.
+- Drop support for Python 3.7, 3.8.
 
 3.0.0 (2024-01-19)
 ------------------
