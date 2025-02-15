@@ -3,7 +3,6 @@ from os.path import isabs
 from os.path import sep
 from os.path import split
 
-import six
 from Acquisition import aq_inner
 from Products.Five.browser import BrowserView
 from Products.Five.component import findSite
@@ -138,8 +137,6 @@ class CustomizationView(BrowserView):
         # Zope 3's ZPT implementation.
         with open(template.filename, 'rb') as f:
             data = f.read()
-        if six.PY2:
-            return data
         return data.decode('utf-8')
 
     def permissionFromViewName(self, viewname):
