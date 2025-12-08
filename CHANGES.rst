@@ -4,7 +4,9 @@ CHANGES
 4.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add support for Python 3.14.
+
+- Drop support for Python 3.9.
 
 
 4.0 (2025-02-15)
